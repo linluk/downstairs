@@ -7,7 +7,7 @@ import ui
 import ecs
 
 class MoveOrAttack(ecs.Component):
-  def __init__(self):
+  def __init__(self) -> None:
     super().__init__()
     self._dx = 0
     self._dy = 0
@@ -23,7 +23,7 @@ class MoveOrAttack(ecs.Component):
   dy = property(lambda s: s._dy, lambda s, y: s._set((s._dx, y)))
 
 class Name(ecs.Component):
-  def __init__(self, name: str):
+  def __init__(self, name: str) -> None:
     super().__init__()
     self._name = name
 
@@ -31,13 +31,13 @@ class Name(ecs.Component):
 
 
 class Player(ecs.Component):
-  def __init__(self):
+  def __init__(self) -> None:
     super().__init__()
 
 
 class Door(ecs.Component):
   ### TODO: the commented key could be useful :-)
-  def __init__(self):
+  def __init__(self) -> None:
     super().__init__()
     self._x = 0
     self._y = 0
@@ -62,7 +62,7 @@ class Door(ecs.Component):
 
 class Position(ecs.Component):
   __slots__ = ('_x', '_y')
-  def __init__(self, x: int = 0, y: int = 0):
+  def __init__(self, x: int = 0, y: int = 0) -> None:
     super().__init__()
     self._x = x
     self._y = y
@@ -80,7 +80,7 @@ class Position(ecs.Component):
 
 class Blocking(ecs.Component):
   __slots__ = ('_value', )
-  def __init__(self, value: bool = True):
+  def __init__(self, value: bool = True) -> None:
     super().__init__()
     self._value = value
 
@@ -92,7 +92,7 @@ class Blocking(ecs.Component):
 
 class Sight(ecs.Component):
   __slots__ = ('_radius', )
-  def __init__(self, radius: float):
+  def __init__(self, radius: float) -> None:
     super().__init__()
     self._radius = radius
 
@@ -101,7 +101,7 @@ class Sight(ecs.Component):
 
 class Graphics(ecs.Component):
   __slots__ = ('ch', 'fg', 'bg', 'st')
-  def __init__(self, ch: str, fg: int = ui.WHITE, bg: int = ui.BLACK, st: int = 0):
+  def __init__(self, ch: str, fg: int = ui.WHITE, bg: int = ui.BLACK, st: int = 0) -> None:
     super().__init__()
     self.ch = ch   # character. for example the @
     self.fg = fg   # foreground color
@@ -111,7 +111,7 @@ class Graphics(ecs.Component):
 
 class CombatStats(ecs.Component):
 
-  def __init__(self):
+  def __init__(self) -> None:
     super().__init__()
     self._acc = 0 # type: float  # accuracy
     self._atk = 0 # type: float  # attack

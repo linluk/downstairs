@@ -9,9 +9,11 @@ rm -r tmp
 rm roguelike.spec
 echo 'deactivate virtualenv'
 deactivate
-
+echo ''
 
 # build the doku!
-pandoc --from=markdown --to=latex --output=bin/features.pdf --standalone --smart README.md
+echo 'build dokumentation file'
+pandoc --from=markdown --to=latex --output=bin/README.pdf --standalone --smart README.md
+echo 'DONE!'
 
 

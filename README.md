@@ -1,7 +1,4 @@
 
-Features
-========
-
 Author: Lukas Singer
 Created: 2017-10-04
 

@@ -3,6 +3,7 @@
 import ui
 
 import game
+import menu
 
 import state_manager
 
@@ -12,8 +13,10 @@ try:
   ui.commands.init_commands()
 
   g = game.Game()
+  m = menu.Menu()
 
   sm = state_manager.StateManager()
+  sm.add_state(m)
   sm.add_state(g)
   sm.main_loop()
 

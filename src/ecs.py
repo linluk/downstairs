@@ -47,7 +47,7 @@ class Entity(object):
 
 
 class System(object):
-  #__slots__ = ('_relevant_components', '_prepare_for_iteration')
+  __slots__ = ('_relevant_components', '_prepare_for_iteration')
   def __init__(self, relevant_components: Iterable[ComponentType], iterate_copy: bool = False) -> None:
     super().__init__()
     self._relevant_components = set(relevant_components) # type: Set[ComponentType]

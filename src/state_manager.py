@@ -1,14 +1,15 @@
 
 import state
+from typing import Dict
 
 class StateManager(object):
 
   def __init__(self) -> None:
     super().__init__()
-    self._running = True
-    self._current = None
-    self._next = None
-    self._states = {}
+    self._running = True # type: bool
+    self._current = None # type: state.State
+    self._next = None # type: state.State
+    self._states = {} # type: Dict[state.StateType, state.State]
 
   def terminate_main_loop(self) -> None:
     self._running = False

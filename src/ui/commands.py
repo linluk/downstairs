@@ -3,9 +3,9 @@ import ui
 import enum
 
 try:
-  # enum.auto() is new in py3.6
   from enum import auto
 except ImportError:
+  # enum.auto() is new in py3.6
   __my_enum_auto_id = 0
   def auto() -> int:
     global __my_enum_auto_id

@@ -83,7 +83,7 @@ class Turn(ecs.System):  # {{{
 
   def entities_at_position(self, x: int, y: int, entities: Set[ecs.Entity]) -> Iterable[ecs.Entity]:
     for e in entities:
-      p = e.get_component(components.Position) # type: component.Position
+      p = e.get_component(components.Position) # type: components.Position
       if p is not None:
         if p.x == x and p.y == y:
           yield e

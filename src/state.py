@@ -1,6 +1,7 @@
+from typing import Type
 
 class State(object):
-  def __init__(self):
+  def __init__(self) -> None:
     super().__init__()
     self._state_manager = None
 
@@ -24,5 +25,5 @@ class State(object):
 
   state_manager = property(lambda s: s._state_manager)
 
-StateType = type(State)
+StateType = Type[State]
 
