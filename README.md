@@ -33,6 +33,7 @@ pip install -r requirements.txt
 Backlog
 =======
 
+  * Github Flavoured Table for the Version History!!
   * Monster AI (moving, attacking, fleeing, ...)
   * Multiple dungeon devels (stairs up and down)
   * Character creation (race, role, stats, weapons, ...)
