@@ -14,6 +14,10 @@ Setup
 =====
 
 ```
+# clone the repository
+git clone https://github.com/linluk/roguelike.git
+cd roguelike
+
 # create a virtual environment with python3
 python3 -m venv venv
 
@@ -69,7 +73,7 @@ Journal
   |2017-10-15| Implemented a helper function classes_from_module().  components module now has a components.all_components member.  Fixed some visibility errors.  Changed MoveOrAttack handling to an add/remove logic, like Door always was (remove component from entity instead of setting dxdy to (0, 0)).  Removed MapInteraction System. Extended Turn System. Turn System now has a _call_sub() method.|
   |2017-11-01| Implemented the StateManager and a State base class. the StateManager handles the main loop. Moved the try-finally around the curses initialization/uninitialization to the main file (roguelike.py). The Game class now is a State.|
   |2018-01-29| Tried to understand my (not so old) Code. Started to implement a Menu.|
-|2018-02-01| Restructured this README file.|
+|2018-02-01| Restructured this README file. Pushed to Github!|
 
 
 
