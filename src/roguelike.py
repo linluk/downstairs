@@ -18,6 +18,8 @@ try:
   sm = state_manager.StateManager()
   sm.add_state(m)
   sm.add_state(g)
+  sm.change_state(menu.Menu)
+
   sm.main_loop()
 
 finally:

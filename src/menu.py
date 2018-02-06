@@ -13,6 +13,7 @@ class Menu(state.State):
     ui.addch(3, 3, 'MenuState')
 
   def input(self) -> None:
+    ui.message('in Menu input')
     cmd = ui.commands.getcmd()
     if cmd.is_direction():
       self.state_manager.change_state(game.Game)
