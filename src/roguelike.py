@@ -14,6 +14,8 @@ try:
 
   g = game.Game()
   m = menu.Menu()
+  m.add_item('Start', game.Game)
+  m.add_item('Quit', None)
 
   sm = state_manager.StateManager()
   sm.add_state(m)

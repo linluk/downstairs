@@ -26,6 +26,8 @@ class Commands(enum.Enum):
   WEST = auto()
   OPEN = auto()
 
+  OK = auto()
+
   def is_direction(self):
     return self in (Commands.NORTH_WEST, Commands.NORTH, Commands.NORTH_EAST, Commands.EAST, Commands.SOUTH_EAST, Commands.SOUTH, Commands.SOUTH_WEST, Commands.WEST)
 
@@ -65,6 +67,7 @@ def init_commands():
   _(Commands.SOUTH_WEST, 'south west', 'b')
   _(Commands.WEST, 'west', 'h')
   _(Commands.OPEN, 'open', 'o')
+  _(Commands.OK, 'ok', '\n')
 
 
 def getcmd():

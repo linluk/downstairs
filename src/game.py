@@ -21,6 +21,7 @@ import components
 import ecs
 
 import state
+import menu
 
 class Game(state.State):
 
@@ -48,7 +49,8 @@ class Game(state.State):
 
 
   def quit(self):
-    self.state_manager.terminate_main_loop()
+    #self.state_manager.terminate_main_loop()
+    self.state_manager.change_state(menu.Menu)
 
   def moved(self, entity: ecs.Entity):
     self.calc_fov_if_player(entity)
