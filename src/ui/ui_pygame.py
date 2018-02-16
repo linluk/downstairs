@@ -3,6 +3,7 @@ import typing
 import pygame
 from pygame.locals import *
 
+import time
 
 import defs
 
@@ -19,7 +20,7 @@ ORANGE = (255, 255, 255)
 BLUE = (0, 0, 255)
 VIOLET = (255, 255, 255)
 CYAN = (255, 255, 255)
-GRAY = (180, 180, 180)
+GRAY = (100, 100, 100)
 LIGHT_RED = (255, 255, 255)
 LIGHT_GREEN = (255, 255, 255)
 YELLOW = (255, 255, 255)
@@ -83,8 +84,6 @@ def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
   global _tileset
   # render(text, antialias, color, background=None)
   # a dictionary of rendered tiles, so i just render every tile once
-  if ch == '#':
-    _tileset.update({ch: _images[0]})
   if not ch in _tileset:
     tile_surface = _font.render(ch, True, fg)
     _tileset.update({ch: tile_surface})
