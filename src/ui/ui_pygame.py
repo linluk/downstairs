@@ -3,7 +3,6 @@ import typing
 import pygame
 from pygame.locals import *
 
-import time
 
 import defs
 
@@ -55,9 +54,6 @@ def start():
   pygame.display.set_caption('Roguelike')
 
 
-# pygame should cleanup their stuff on their own, even the most
-# modules have a quit() function to do so.
-
 def stop():
   pygame.quit()
 
@@ -87,6 +83,8 @@ def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
   global _tileset
   # render(text, antialias, color, background=None)
   # a dictionary of rendered tiles, so i just render every tile once
+  if ch == '#':
+    _tileset.update({ch: _images[0]})
   if not ch in _tileset:
     tile_surface = _font.render(ch, True, fg)
     _tileset.update({ch: tile_surface})
@@ -113,11 +111,8 @@ def getline():
     for event in pygame.event.get():
       if event.type == KEYDOWN:
         if event.key == K_RETURN:
-          drawline('')
+          clear()
           return line
-        elif event.key == K_0:
-          line = line[:-1]
-          drawline(line)
         else:
           line += chr(event.key)
           drawline(line)
@@ -137,9 +132,8 @@ def drawline(line):
   global _screen
   global _line
   _line.fill(BLACK)
-  if line != '':
-    _line = _font.render(line, True, WHITE)
-    _screen.blit(_line, (0, 20))
+  _line = _font.render(line, True, WHITE)
+  _screen.blit(_line, (5, 20))
   pygame.display.update()
 
 
@@ -148,12 +142,7 @@ def message(msg):
   global _message
   _message.fill(BLACK)
   _message = _font.render(msg, True, WHITE)
-  # if msg is None:
   _screen.blit(_message, (defs.MESSAGE_X, defs.MESSAGE_Y))
-  # _screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, ' ' * defs.MESSAGE_W, defs.MESSAGE_W - 1)
-  # else:
-  # _screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, msg, defs.MESSAGE_W - 1)
-  # _message = msg
 
 
 def stats(line):
