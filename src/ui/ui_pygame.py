@@ -33,13 +33,16 @@ NORMAL = 1
 
 _screen = None
 _font = None
-_message = pygame.Surface((defs.MESSAGE_W, defs.MESSAGE_H)) # init message surface
+_message = pygame.Surface((defs.MESSAGE_W, defs.MESSAGE_H))  # init message surface
+_line = pygame.Surface((400, 12))  # showing inputs from user when ':'
 
 _kbc = {  # keyboard codes -> _kbc dictionary for differs in pygame and ncurses keycodes
-  K_RETURN: ord('\n')
+  K_RETURN: ord('\n'),
+  K_DELETE: ord('\b'),
+  K_COLON:  ord(':'),
 }
 
-_tileset = {} # dictionary for rendered tilesets
+_tileset = {}  # dictionary for rendered tilesets
 
 
 def start():
@@ -81,6 +84,7 @@ def getch():
 def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
   global _screen
   global _font
+  global _tileset
   # render(text, antialias, color, background=None)
   # a dictionary of rendered tiles, so i just render every tile once
   if not ch in _tileset:
@@ -103,13 +107,21 @@ def clear():
 
 def getline():
   global _screen
-  mystring = ''
+  line = ''
+  drawline('::')
   while True:
     for event in pygame.event.get():
       if event.type == KEYDOWN:
         if event.key == K_RETURN:
-          return mystring
-      mystring += chr(event.key)
+          drawline('')
+          return line
+        elif event.key == K_0:
+          line = line[:-1]
+          drawline(line)
+        else:
+          line += chr(event.key)
+          drawline(line)
+    time.sleep(0.01)
   # win = curses.newwin(defs.INPUT_H, defs.INPUT_W, defs.INPUT_Y, defs.INPUT_X)
   # curses.curs_set(1)
   # txtbox = curses.textpad.Textbox(win)
@@ -121,14 +133,24 @@ def getline():
   # return line
 
 
+def drawline(line):
+  global _screen
+  global _line
+  _line.fill(BLACK)
+  if line != '':
+    _line = _font.render(line, True, WHITE)
+    _screen.blit(_line, (0, 20))
+  pygame.display.update()
+
+
 def message(msg):
   global _screen
   global _message
   _message.fill(BLACK)
   _message = _font.render(msg, True, WHITE)
-  #if msg is None:
+  # if msg is None:
   _screen.blit(_message, (defs.MESSAGE_X, defs.MESSAGE_Y))
-  #_screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, ' ' * defs.MESSAGE_W, defs.MESSAGE_W - 1)
+  # _screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, ' ' * defs.MESSAGE_W, defs.MESSAGE_W - 1)
   # else:
   # _screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, msg, defs.MESSAGE_W - 1)
   # _message = msg
