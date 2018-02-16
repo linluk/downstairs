@@ -20,7 +20,7 @@ ORANGE = (255, 255, 255)
 BLUE = (0, 0, 255)
 VIOLET = (255, 255, 255)
 CYAN = (255, 255, 255)
-GRAY = (180, 180, 180)
+GRAY = (100, 100, 100)
 LIGHT_RED = (255, 255, 255)
 LIGHT_GREEN = (255, 255, 255)
 YELLOW = (255, 255, 255)
@@ -54,9 +54,6 @@ def start():
   _screen = pygame.display.set_mode((800, 400))  # per char 10x10
   pygame.display.set_caption('Roguelike')
 
-
-# pygame should cleanup their stuff on their own, even the most
-# modules have a quit() function to do so.
 
 def stop():
   pygame.quit()
@@ -113,11 +110,8 @@ def getline():
     for event in pygame.event.get():
       if event.type == KEYDOWN:
         if event.key == K_RETURN:
-          drawline('')
+          clear()
           return line
-        elif event.key == K_0:
-          line = line[:-1]
-          drawline(line)
         else:
           line += chr(event.key)
           drawline(line)
@@ -137,9 +131,8 @@ def drawline(line):
   global _screen
   global _line
   _line.fill(BLACK)
-  if line != '':
-    _line = _font.render(line, True, WHITE)
-    _screen.blit(_line, (0, 20))
+  _line = _font.render(line, True, WHITE)
+  _screen.blit(_line, (5, 20))
   pygame.display.update()
 
 
@@ -148,12 +141,7 @@ def message(msg):
   global _message
   _message.fill(BLACK)
   _message = _font.render(msg, True, WHITE)
-  # if msg is None:
   _screen.blit(_message, (defs.MESSAGE_X, defs.MESSAGE_Y))
-  # _screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, ' ' * defs.MESSAGE_W, defs.MESSAGE_W - 1)
-  # else:
-  # _screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, msg, defs.MESSAGE_W - 1)
-  # _message = msg
 
 
 def stats(line):
