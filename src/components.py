@@ -113,14 +113,11 @@ class CombatStats(ecs.Component):
 
   def __init__(self) -> None:
     super().__init__()
-    self._acc = 0 # type: float  # accuracy
     self._atk = 0 # type: float  # attack
     self._def = 0 # type: float  # defense
     self._hpm = 1 # type: int    # health max
     self._hp = self._hpm # type: int  # health
 
-  def _set_acc(self, value: int) -> None:
-    self._acc = value
   def _set_atk(self, value: int) -> None:
     self._atk = value
   def _set_def(self, value: int) -> None:
@@ -130,11 +127,24 @@ class CombatStats(ecs.Component):
   def _set_hp(self, value: int) -> None:
     self._hp = value
 
-  ACC = property(lambda s: s._acc, _set_acc)
-  ATK = property(lambda s: s._acc, _set_acc)
+  ATK = property(lambda s: s._atk, _set_atk)
   DEF = property(lambda s: s._def, _set_def)
   HPM = property(lambda s: s._hpm, _set_hpm)
   HP = property(lambda s: s._hp, _set_hp)
+
+
+class Ai(ecs.Component):
+  # this component controls which ai systems should be executed on an entity
+  def __init__(self, **kwargs) -> None:
+    super().__init__()
+    self._move_or_attack = kwargs.get('move_or_attack', False)
+
+  def _set_move_or_attack(self, value: bool) -> None:
+    self._move_or_attack = value
+
+  move_or_attack = property(lambda s: s._move_or_attack, _set_move_or_attack)
+
+
 
 
 all_components = [cls for cls in utils.classes_from_module(__name__, lambda c: issubclass(c, ecs.Component))]

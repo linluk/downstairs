@@ -2,13 +2,14 @@
 from typing import Set, Callable, Iterable
 
 import ecs
+import rnd
 
 import ui
 import ui.commands
 from ui.commands import Commands
 import components
 
-class UserInput(ecs.System):  # {{{
+class UserInput(ecs.System):  # {{{1
   def __init__(self):
     super().__init__([components.Player])
     self._on_quit = None # type: Callable[[], None]
@@ -43,25 +44,31 @@ class UserInput(ecs.System):  # {{{
             door = components.Door()
             entity.add_component(door)
           door.xy = (position.x + dx, position.y + dy)
-    return None
-
-
-    if cmd == Commands.SKIP: turn = True
-    elif cmd == Commands.ATTACK:
-      ui.message('which direction?')
-      direction = ui.commands.require_direction()
-      if direction is not None:
-        x, y = direction.direction_to_dxdy()
-        turn = self.player.combat.attack_xy(self.player.position.x + x, self.player.position.y + y)
+    #return None
 
     else:
       ui.message('command not implemented!')
 
   on_quit = property(_get_on_quit, _set_on_quit)
-# }}}
+
+class Ai(ecs.System):  # {{{1
+  def __init__(self) -> None:
+    super().__init__([components.Ai])
+
+  def update(self, entity: ecs.Entity, entities: Set[ecs.Entity]):
+    ai = entity.get_component(components.Ai) # type: components.Ai
+    if ai.move_or_attack:
+      move_or_attack = entity.get_component(components.MoveOrAttack) # type: components.MoveOrAttack
+      if move_or_attack is None:
+        move_or_attack = components.MoveOrAttack()
+        entity.add_component(move_or_attack)
+      move_or_attack.dx = rnd.randrange(-2, 2)
+      move_or_attack.dy = rnd.randrange(-2, 2)
+    #print(str(move_or_attack))
 
 
-class Turn(ecs.System):  # {{{
+
+class Turn(ecs.System):  # {{{1
   def __init__(self):
     super().__init__([], True)
     self._check_blocked = None # type: Callable[[int, int], bool]
@@ -107,13 +114,25 @@ class Turn(ecs.System):  # {{{
     cy = position.y + move_or_attack.dy
     combat_stats = entity.get_component(components.CombatStats) # type: components.CombatStats
     if combat_stats is not None:
-      for e in self.entities_at_position(cx, cy, entities):
+      for e in iter(e for e in self.entities_at_position(cx, cy, entities) if e != entity):
         other_combat_stats = e.get_component(components.CombatStats) # type: components.CombatStats
         if other_combat_stats is not None:
-          other_combat_stats.HP -= combat_stats.ATK
-          if other_combat_stats.HP <= 0:
-            entities.remove(e)
-            ui.message('{} killed {}'.format(hash(entity), hash(e)))
+          # now we have our (whoever it is) and others combat stats
+
+          # http://www.roguebasin.com/index.php?title=Thoughts_on_Combat_Models
+          # TODO: this does not work yet!!!
+          hit = rnd.random() > combat_stats.ATK / (combat_stats.ATK + other_combat_stats.DEF)
+          if hit:
+            damage = max(1, rnd.random() * (combat_stats.ATK - other_combat_stats.DEF))
+            other_combat_stats.HP -= damage
+
+            if other_combat_stats.HP <= 0:
+              entities.remove(e)
+              ui.message('{} killed {}'.format(hash(entity), hash(e)))
+              #print('{} killed {}'.format(hash(entity), hash(e)))
+            else:
+              ui.message('{} did {} damage to {}'.format(hash(entity), damage, hash(e)))
+              #print('{} did {} damage to {}'.format(hash(entity), damage, hash(e)))
           return ### refactor but if we are here no moving should be done!!
 
     if not self.is_blocked(cx, cy, entities):
@@ -165,9 +184,8 @@ class Turn(ecs.System):  # {{{
   toggle_door = property(_get_toggle_door, _set_toggle_door, doc='should return true when toggled the door')
   check_blocked = property(_get_check_blocked, _set_check_blocked)
   on_moved = property(_get_on_moved, _set_on_moved)
-# }}}
 
-class Rendering(ecs.System):  # {{{
+class Rendering(ecs.System):  # {{{1
 
   def __init__(self, offset_x: int = 0, offset_y: int = 0) -> None:
     super().__init__([components.Graphics, components.Position])
@@ -195,4 +213,3 @@ class Rendering(ecs.System):  # {{{
 
   check_visible = property(_get_check_visible, _set_check_visible)
 
-# }}}

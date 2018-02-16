@@ -39,6 +39,8 @@ class Game(state.State):
     self._turn.on_moved = self.moved
     self._turn.toggle_door = self.toggle_door
 
+    self._ai = systems.Ai()
+
     self._rendering = systems.Rendering(defs.LEVEL_X, defs.LEVEL_Y)
     self._rendering.check_visible = self.level.is_visible
 
@@ -78,6 +80,7 @@ class Game(state.State):
     self._user_input.execute(self._entity_list)
 
   def update(self) -> None:
+    self._ai.execute(self._entity_list)
     self._turn.execute(self._entity_list)
 
   def leave(self) -> None:
@@ -98,7 +101,10 @@ class Game(state.State):
     c = components.Sight(8)
     e.add_component(c)
     c = components.CombatStats()
-    c.ATK = 1
+    c.ATK = 10
+    c.DEF = 10
+    c.HPM = 10
+    c.HP = c.HPM
     e.add_component(c)
     self.calc_fov_if_player(e)
 

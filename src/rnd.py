@@ -38,8 +38,27 @@ class Random(object):
 
 
 
+_rnd = Random()
+
+def random():
+  return _rnd.random()
+
+def randrange(low: int, high: int) -> int:
+  return _rnd.randrange(low, high)
+
+def randint(high: int) -> int:
+  return _rnd.randint(high)
+
+def chance(probability: float=0.5) -> bool:
+  return _rnd.chance(probability)
+
+
+
+
 if __name__ == '__main__':
   r = Random()
+  for _ in range(10):
+    print(r.randrange(-2,2))
   ###
   for i in range(10):
     print(r.chance(0.8))
