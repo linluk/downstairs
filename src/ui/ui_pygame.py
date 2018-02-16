@@ -1,4 +1,3 @@
-
 import typing
 
 import pygame
@@ -13,7 +12,7 @@ SIZE_OFFSET_Y = 12
 
 # Color definitions, todo convert them from ui_curses to rgb
 WHITE = (255, 255, 255)
-BLACK = (0, 0 ,0)
+BLACK = (0, 0, 0)
 
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -34,25 +33,31 @@ NORMAL = 1
 
 _screen = None
 _font = None
+_message = pygame.Surface((defs.MESSAGE_W, defs.MESSAGE_H)) # init message surface
 
-_kbc = { # keyboard codes
+_kbc = {  # keyboard codes -> _kbc dictionary for differs in pygame and ncurses keycodes
   K_RETURN: ord('\n')
 }
+
+_tileset = {} # dictionary for rendered tilesets
+
 
 def start():
   global _screen
   global _font
   pygame.init()
   pygame.font.init()
-  _font = pygame.font.SysFont('Comic Sans MS', 20) # pixel size ???
-  _screen = pygame.display.set_mode((800, 400)) #per char 10x10
+  _font = pygame.font.SysFont('Comic Sans MS', 20)  # pixel size ???
+  _screen = pygame.display.set_mode((800, 400))  # per char 10x10
   pygame.display.set_caption('Roguelike')
+
 
 # pygame should cleanup their stuff on their own, even the most
 # modules have a quit() function to do so.
 
 def stop():
   pygame.quit()
+
 
 # returns the strings of keys, like "up", "left", "j" and so on
 # you could use also the pygame.key.get_pressed() but i'm
@@ -65,36 +70,76 @@ def getch():
       if event.type == QUIT:
         return 27
       elif event.type == KEYDOWN:
-        #if event.key == K_DOWN:
+        # _kbc dictionary for differs in pygame and ncurses keycodes
         return _kbc.get(event.key, event.key)
     time.sleep(0.01)
+
+    # TODO: dictionary von surfaces bei erstem mal dazufügen dann muss man nicht jedesmal rendern
+    # auslagern in eigene Klasse
+
 
 def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
   global _screen
   global _font
   # render(text, antialias, color, background=None)
-  text_surface = _font.render(ch, True, fg)
+  # a dictionary of rendered tiles, so i just render every tile once
+  if not ch in _tileset:
+    tile_surface = _font.render(ch, True, fg)
+    _tileset.update({ch: tile_surface})
   # This creates a new surface with text already drawn onto it. 
   # At the end you can just blit the text surface onto your screen.
-  # todo maybe first draw all on text_surface and then own def for blit
   # blit(source, dest, area=None, special_flags = 0)
-  _screen.blit(text_surface, (x*SIZE_OFFSET_X, y*SIZE_OFFSET_Y))
+  _screen.blit(_tileset[ch], (x * SIZE_OFFSET_X, y * SIZE_OFFSET_Y))
+
 
 def clear():
   global _screen
-  _screen.fill((0, 0, 0)) # fill screen with black color
-  # if _message is not None: # todo messaging system implement
+  _screen.fill((0, 0, 0))  # fill screen with black color
+  # if _message is not None: # TODO: messaging system implement
   #   message(_message)
+
+  # TODO: getline implementieren in pygame kommt aus command.py
+
+
+def getline():
+  global _screen
+  mystring = ''
+  while True:
+    for event in pygame.event.get():
+      if event.type == KEYDOWN:
+        if event.key == K_RETURN:
+          return mystring
+      mystring += chr(event.key)
+  # win = curses.newwin(defs.INPUT_H, defs.INPUT_W, defs.INPUT_Y, defs.INPUT_X)
+  # curses.curs_set(1)
+  # txtbox = curses.textpad.Textbox(win)
+  # line = txtbox.edit().strip()
+  # win.clear() # this is not needed! or is it?
+  # del win
+  # curses.curs_set(0)
+  # _screen.touchwin()
+  # return line
+
 
 def message(msg):
   global _screen
   global _message
+  _message.fill(BLACK)
+  _message = _font.render(msg, True, WHITE)
   #if msg is None:
-    # _screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, ' ' * defs.MESSAGE_W, defs.MESSAGE_W - 1)
+  _screen.blit(_message, (defs.MESSAGE_X, defs.MESSAGE_Y))
+  #_screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, ' ' * defs.MESSAGE_W, defs.MESSAGE_W - 1)
   # else:
-    # _screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, msg, defs.MESSAGE_W - 1)
+  # _screen.addnstr(defs.MESSAGE_Y, defs.MESSAGE_X, msg, defs.MESSAGE_W - 1)
   # _message = msg
 
+
+def stats(line):
+  global _screen
+  # _screen.addstr(defs.STATS_Y, defs.STATS_X, line)
+
+
+# this section only for testing
 if __name__ == '__main__':
   try:
     start()
@@ -115,4 +160,3 @@ if __name__ == '__main__':
     _screen.getch()
   finally:
     stop()
-
