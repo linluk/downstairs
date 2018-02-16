@@ -1,4 +1,5 @@
 .mypy_cache/
+.idea
 bin/
 venv/
 **/__pycache__/
