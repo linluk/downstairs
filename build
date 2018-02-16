@@ -13,7 +13,7 @@ echo ''
 
 # build the doku!
 echo 'build dokumentation file'
-pandoc --from=markdown --to=latex --output=bin/README.pdf --standalone --smart README.md
+pandoc --from=markdown --to=latex --output=bin/README.pdf --standalone --smart README
 echo 'DONE!'
 
 
