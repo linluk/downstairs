@@ -9,19 +9,24 @@ import ui.commands
 from ui.commands import Commands
 import components
 
+import defs
 import level
+import state_manager
 
 class BaseSystem(ecs.System): # {{{1
   """ base class for game systems (game dependencies i dont want to have in the ecs module) """
   def __init__(self, relevant_components: Iterable[ecs.ComponentType], iterate_copy: bool = False) -> None:
     super().__init__(relevant_components, iterate_copy)
     self._level = None # type: level.Level
+    self._state_manager = None # type: state_manager.StateManager
 
-  def execute(self, level_: level.Level,  entities: Set[ecs.Entity]):
+  def execute(self, level_: level.Level, state_manager_: state_manager.StateManager, entities: Set[ecs.Entity]):
     self._level = level_
+    self._state_manager = state_manager_
     super().execute(entities)
 
   level = property(lambda s: s._level)
+  state_manager = property(lambda s: s._state_manager)
 
 
 
@@ -251,13 +256,30 @@ class Rendering(BaseSystem):  # {{{1
     self._offset_x = offset_x
     self._offset_y = offset_y
 
+  def before(self, entities: Set[ecs.Entity]) -> bool:
+    ui.clear()
+
+    for (x, y), t in self.level.tilemap.get_tiles():
+      if t.explored:
+        t.draw(x + defs.LEVEL_X, y + defs.LEVEL_Y)
+
+    return super().before(entities)
+
   def update(self, entity: ecs.Entity, entities: Set[ecs.Entity]) -> None:
-    p = entity.get_component(components.Position)
-    # i do not need to check if p is assigned. i only get entities who has a Position Component.
-    if self._do_check_visible(p.x, p.y):
+    position = entity.get_component(components.Position)
+    # i do not need to check if position is assigned. i only get entities who has a Position Component.
+    if self._do_check_visible(position.x, position.y):
       g = entity.get_component(components.Graphics)
       # i do not need to check if g is assigned. i only get entities who has a Graphics Component.
-      ui.addch(p.x + self._offset_x, p.y + self._offset_y, g.ch, g.fg, g.bg, g.st)
+      ui.addch(position.x + self._offset_x, position.y + self._offset_y, g.ch, g.fg, g.bg, g.st)
+
+    player = entity.get_component(components.Player)
+    if player is not None:
+      combat_stats = entity.get_component(components.CombatStats) # type: components.CombatStats
+      if combat_stats is not None:
+        ui.stats(' HP: {:3}  HPM: {:3}\nATK: {:3}  DEF: {:3}'.format(combat_stats.HP, combat_stats.HPM, combat_stats.ATK, combat_stats.DEF))
+
+
 
   def _do_check_visible(self, x: int, y: int) -> bool:
     if self._check_visible is not None:

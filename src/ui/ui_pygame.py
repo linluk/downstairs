@@ -52,7 +52,7 @@ def start():
   pygame.init()
   pygame.font.init()
   _font = pygame.font.SysFont('Comic Sans MS', 20)  # pixel size ???
-  _screen = pygame.display.set_mode((800, 400))  # per char 10x10
+  _screen = pygame.display.set_mode((defs.SCREEN_W * SIZE_OFFSET_X, defs.SCREEN_H * SIZE_OFFSET_Y))
   pygame.display.set_caption('Roguelike')
 
 

@@ -1,6 +1,7 @@
 
-AUTHOR = 'Lukas Singer'
-EMAIL = 'lukas42singer@gmail.com'
+TITLE = 'Roguelike'
+AUTHOR = 'Lukas Singer, Daniel Nimmervoll'
+EMAIL = 'lukas42singer (at) gmail (dot) com'
 COPYRIGHT = 'Copyright (C) 2018 by {}'.format(AUTHOR)
 CREDITS = [
     "https://www.python.org/",

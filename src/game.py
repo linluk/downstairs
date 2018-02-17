@@ -70,22 +70,15 @@ class Game(state.State):
     return False
 
   def render(self) -> None:
-    ui.clear()
+    self._rendering.execute(self.level, self.state_manager, self._entity_list)
 
-    for (x, y), t in self.level.tilemap.get_tiles():
-      if t.explored:
-        t.draw(x + defs.LEVEL_X, y + defs.LEVEL_Y)
-
-    self._rendering.execute(self.level, self._entity_list)
-
-    #ui.stats('Health: {} of {}\nTurn: {}'.format(self.player.health.hp, self.player.health.hp_max, self.turn_count))
 
   def input(self) -> None:
-    self._user_input.execute(self.level, self._entity_list)
+    self._user_input.execute(self.level, self.state_manager, self._entity_list)
 
   def update(self) -> None:
-    self._ai.execute(self.level, self._entity_list)
-    self._turn.execute(self.level, self._entity_list)
+    self._ai.execute(self.level, self.state_manager, self._entity_list)
+    self._turn.execute(self.level, self.state_manager, self._entity_list)
 
   def leave(self) -> None:
     pass
@@ -107,11 +100,10 @@ class Game(state.State):
     c = components.CombatStats()
     c.ATK = 10
     c.DEF = 10
-    c.HPM = 10
+    c.HPM = 25
     c.HP = c.HPM
     e.add_component(c)
     self.calc_fov_if_player(e)
-
 
     self._entity_list = [e]
 
