@@ -4,6 +4,7 @@ from pygame.locals import *
 import time
 
 import defs
+from src.ui.gfx_tiles import Tiles
 
 SIZE_OFFSET_X = 12
 SIZE_OFFSET_Y = 12
@@ -33,6 +34,8 @@ _screen = None
 _font = None
 _message = pygame.Surface((defs.MESSAGE_W, defs.MESSAGE_H))  # init message surface
 _line = pygame.Surface((400, 12))  # showing inputs from user when ':'
+_tiles = Tiles(u"../res/marching-tiles.gif", 12, 1) # tile class
+_tiles.get_tiles()
 
 _kbc = {  # keyboard codes -> _kbc dictionary for differs in pygame and ncurses keycodes
   K_RETURN: ord('\n'),
@@ -80,12 +83,12 @@ def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
   global _screen
   global _font
   global _tileset
+  global _tiles
   # render(text, antialias, color, background=None)
   # a dictionary of rendered tiles, so i just render every tile once
   if not ch in _tileset:
     if ch == '#':
-      tile_surface = pygame.Surface((12, 12))
-      pygame.draw.rect(tile_surface, GRAY, (0, 0, 12, 12))
+      tile_surface = _tiles.tiles[(9, 14)]
     else: tile_surface = _font.render(ch, True, fg)
     _tileset.update({ch: tile_surface})
   # This creates a new surface with text already drawn onto it. 
