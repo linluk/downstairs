@@ -1,7 +1,7 @@
-import typing
-
 import pygame
 from pygame.locals import *
+
+from sprites import Wall
 
 import time
 
@@ -35,6 +35,7 @@ _screen = None
 _font = None
 _message = pygame.Surface((defs.MESSAGE_W, defs.MESSAGE_H))  # init message surface
 _line = pygame.Surface((400, 12))  # showing inputs from user when ':'
+_wall = Wall(GRAY, 12, 12)
 
 _kbc = {  # keyboard codes -> _kbc dictionary for differs in pygame and ncurses keycodes
   K_RETURN: ord('\n'),
@@ -85,13 +86,15 @@ def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
   # render(text, antialias, color, background=None)
   # a dictionary of rendered tiles, so i just render every tile once
   if not ch in _tileset:
-    tile_surface = _font.render(ch, True, fg)
+    if ch == '#':
+      tile_surface = pygame.Surface((12, 12))
+      pygame.draw.rect(tile_surface, GRAY, (0, 0, 12, 12))
+    else: tile_surface = _font.render(ch, True, fg)
     _tileset.update({ch: tile_surface})
   # This creates a new surface with text already drawn onto it. 
   # At the end you can just blit the text surface onto your screen.
   # blit(source, dest, area=None, special_flags = 0)
   _screen.blit(_tileset[ch], (x * SIZE_OFFSET_X, y * SIZE_OFFSET_Y))
-
 
 def clear():
   global _screen
