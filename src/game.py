@@ -76,16 +76,16 @@ class Game(state.State):
       if t.explored:
         t.draw(x + defs.LEVEL_X, y + defs.LEVEL_Y)
 
-    self._rendering.execute(self._entity_list)
+    self._rendering.execute(self.level, self._entity_list)
 
     #ui.stats('Health: {} of {}\nTurn: {}'.format(self.player.health.hp, self.player.health.hp_max, self.turn_count))
 
   def input(self) -> None:
-    self._user_input.execute(self._entity_list)
+    self._user_input.execute(self.level, self._entity_list)
 
   def update(self) -> None:
-    self._ai.execute(self._entity_list)
-    self._turn.execute(self._entity_list)
+    self._ai.execute(self.level, self._entity_list)
+    self._turn.execute(self.level, self._entity_list)
 
   def leave(self) -> None:
     pass

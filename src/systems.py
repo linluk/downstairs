@@ -9,7 +9,23 @@ import ui.commands
 from ui.commands import Commands
 import components
 
-class UserInput(ecs.System):  # {{{1
+import level
+
+class BaseSystem(ecs.System): # {{{1
+  """ base class for game systems (game dependencies i dont want to have in the ecs module) """
+  def __init__(self, relevant_components: Iterable[ecs.ComponentType], iterate_copy: bool = False) -> None:
+    super().__init__(relevant_components, iterate_copy)
+    self._level = None # type: level.Level
+
+  def execute(self, level_: level.Level,  entities: Set[ecs.Entity]):
+    self._level = level_
+    super().execute(entities)
+
+  level = property(lambda s: s._level)
+
+
+
+class UserInput(BaseSystem):  # {{{1
   def __init__(self):
     super().__init__([components.Player])
     self._on_quit = None # type: Callable[[], None]
@@ -44,14 +60,13 @@ class UserInput(ecs.System):  # {{{1
             door = components.Door()
             entity.add_component(door)
           door.xy = (position.x + dx, position.y + dy)
-    #return None
 
     else:
       ui.message('command not implemented!')
 
   on_quit = property(_get_on_quit, _set_on_quit)
 
-class Ai(ecs.System):  # {{{1
+class Ai(BaseSystem):  # {{{1
   def __init__(self) -> None:
     super().__init__([components.Ai])
     self._line_of_sight = None
@@ -109,7 +124,7 @@ class Ai(ecs.System):  # {{{1
 
 
 
-class Turn(ecs.System):  # {{{1
+class Turn(BaseSystem):  # {{{1
   def __init__(self):
     super().__init__([], True)
     self._check_blocked = None # type: Callable[[int, int], bool]
@@ -228,7 +243,7 @@ class Turn(ecs.System):  # {{{1
   check_blocked = property(_get_check_blocked, _set_check_blocked)
   on_moved = property(_get_on_moved, _set_on_moved)
 
-class Rendering(ecs.System):  # {{{1
+class Rendering(BaseSystem):  # {{{1
 
   def __init__(self, offset_x: int = 0, offset_y: int = 0) -> None:
     super().__init__([components.Graphics, components.Position])
