@@ -54,17 +54,58 @@ class UserInput(ecs.System):  # {{{1
 class Ai(ecs.System):  # {{{1
   def __init__(self) -> None:
     super().__init__([components.Ai])
+    self._line_of_sight = None
+    self.p_position = None # type: components.Position
+    self.p_combat_stats = None # type: components.CombatStats
+
+
+  def _can_see(self, r: float, x1: int, y1: int, x2: int, y2: int) -> bool:
+    if ((max(x1, x2) - min(x1, x2))**2 + (max(y1, y2) - min(y1, y2))**2)**0.5 > r:
+      return False
+    if self._line_of_sight is not None:
+      return self._line_of_sight(x1, y1, x2, y2)
+    else:
+      return False
+  def _set_line_of_sight(self, line_of_sight: Callable[[int, int, int, int], bool]) -> None:
+    self._line_of_sight = line_of_sight
+
+  def before(self, entities: Set[ecs.Entity]) -> bool:
+    p = None # type: ecs.Entity
+    for e in entities:
+      if e.has_component(components.Player):
+        p = e
+        break
+
+    if p is not None:
+      self.p_position = p.get_component(components.Position) # type: components.Position
+      self.p_combat_stats = p.get_component(components.CombatStats) # type: components.CombatStats
+
+    return super().before(entities)
+
 
   def update(self, entity: ecs.Entity, entities: Set[ecs.Entity]):
     ai = entity.get_component(components.Ai) # type: components.Ai
     if ai.move_or_attack:
-      move_or_attack = entity.get_component(components.MoveOrAttack) # type: components.MoveOrAttack
-      if move_or_attack is None:
-        move_or_attack = components.MoveOrAttack()
-        entity.add_component(move_or_attack)
-      move_or_attack.dx = rnd.randrange(-2, 2)
-      move_or_attack.dy = rnd.randrange(-2, 2)
+      position = entity.get_component(components.Position) # type: components.Position
+      if position is not None:
+        move_or_attack = entity.get_component(components.MoveOrAttack) # type: components.MoveOrAttack
+        if move_or_attack is None:
+          move_or_attack = components.MoveOrAttack()
+          entity.add_component(move_or_attack)
+        moved = False
+        sight = entity.get_component(components.Sight) # type: components.Sight
+        if sight is not None:
+          if self._can_see(sight.radius, position.x, position.y, self.p_position.x, self.p_position.y):
+            ui.message('{} sees player'.format(hash(entity)))
+            move_or_attack.dx = 1 if position.x < self.p_position.x else -1 if position.x > self.p_position.x else 0
+            move_or_attack.dy = 1 if position.y < self.p_position.y else -1 if position.y > self.p_position.y else 0
+            moved = True
+        if not moved:
+          move_or_attack.dx = rnd.randrange(-2, 2)
+          move_or_attack.dy = rnd.randrange(-2, 2)
     #print(str(move_or_attack))
+
+  line_of_sight = property(lambda s: s._line_of_sight, _set_line_of_sight)
 
 
 
@@ -127,12 +168,14 @@ class Turn(ecs.System):  # {{{1
             other_combat_stats.HP -= damage
 
             if other_combat_stats.HP <= 0:
-              entities.remove(e)
-              ui.message('{} killed {}'.format(hash(entity), hash(e)))
-              #print('{} killed {}'.format(hash(entity), hash(e)))
+              if e.has_component(components.Player):
+                # TODO: handle death!!
+                ui.message('you died!')
+              else:
+                entities.remove(e)
+                ui.message('{} killed {}'.format(hash(entity), hash(e)))
             else:
               ui.message('{} did {} damage to {}'.format(hash(entity), damage, hash(e)))
-              #print('{} did {} damage to {}'.format(hash(entity), damage, hash(e)))
           return ### refactor but if we are here no moving should be done!!
 
     if not self.is_blocked(cx, cy, entities):

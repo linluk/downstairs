@@ -40,9 +40,13 @@ class Game(state.State):
     self._turn.toggle_door = self.toggle_door
 
     self._ai = systems.Ai()
+    self._ai.line_of_sight = self.line_of_sight
 
     self._rendering = systems.Rendering(defs.LEVEL_X, defs.LEVEL_Y)
     self._rendering.check_visible = self.level.is_visible
+
+  def line_of_sight(self, x1: int, y1: int, x2: int, y2: int) -> bool:
+    return self.level.tilemap.los(x1, y1, x2, y2)
 
   def calc_fov_if_player(self, entity: ecs.Entity):
     if entity.has_component(components.Player):

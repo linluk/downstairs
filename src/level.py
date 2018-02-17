@@ -10,7 +10,6 @@ class Level(object):
 
   def __init__(self) -> None:
     super().__init__()
-    self._player = None
     self._tilemap = tilemap.TileMap(defs.LEVEL_W, defs.LEVEL_H)
     self._entry = self._tilemap.random(123)
 

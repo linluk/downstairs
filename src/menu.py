@@ -48,6 +48,6 @@ class Menu(state.State):
     pass
 
   def enter(self) -> None:
-    pass
+    ui.clear()
 
 

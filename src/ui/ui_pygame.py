@@ -4,7 +4,7 @@ from pygame.locals import *
 import time
 
 import defs
-from src.ui.gfx_tiles import Tiles
+from ui.gfx_tiles import Tiles
 
 SIZE_OFFSET_X = 12
 SIZE_OFFSET_Y = 12
@@ -93,7 +93,7 @@ def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
       tile_surface = _tiles.tiles[(7, 14)]
     else: tile_surface = _font.render(ch, True, fg)
     _tileset.update({ch: tile_surface})
-  # This creates a new surface with text already drawn onto it. 
+  # This creates a new surface with text already drawn onto it.
   # At the end you can just blit the text surface onto your screen.
   # blit(source, dest, area=None, special_flags = 0)
   _screen.blit(_tileset[ch], (x * SIZE_OFFSET_X, y * SIZE_OFFSET_Y))

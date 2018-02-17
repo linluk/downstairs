@@ -1,3 +1,3 @@
 
-
-from .ui_pygame import *
+from .ui_curses import *
+#from .ui_pygame import *

@@ -5,7 +5,7 @@ import rnd
 
 import ui
 
-class Graphic(object):  # {{{
+class Graphic(object):  # {{{1
   __slots__ = ('ch', 'fg', 'bg', 'st')
   def __init__(self, ch: str, fg: int = ui.WHITE, bg: int = ui.BLACK, st: int = 0):
     self.ch = ch   # character. for example the @
@@ -25,10 +25,8 @@ DOOR_CLOSE_SHADOW = Graphic('+', ui.GRAY, ui.BLACK, 0)
 DOOR_OPEN = Graphic(',', ui.WHITE, ui.BLACK, 0)
 DOOR_OPEN_SHADOW = Graphic(',', ui.GRAY, ui.BLACK, 0)
 
-# }}}
 
-
-class Tile(object):  # {{{
+class Tile(object):  # {{{1
   __slots__ = ('_blocks', '_opaque', '_graphic_shadow', '_graphic', '_explored', '_visible') # type: ignore
   def __init__(self, blocks: bool, opaque: bool, graphic: Graphic, graphic_shadow: Graphic) -> None:
     super().__init__()
@@ -87,7 +85,7 @@ class Door(Tile):
 # }}}
 
 
-class TileMap(object):  # {{{
+class TileMap(object):  # {{{1
   __slots__ = ('_width', '_height', '_tiles')
   def __init__(self, width: int = 79, height: int = 35) -> None:
     super().__init__()
@@ -109,7 +107,7 @@ class TileMap(object):  # {{{
   width = property(lambda s: s._width)
   height = property(lambda s: s._height)
 
-  def fov(self, x, y, r):
+  def fov(self, x, y, r): #{{{2
     # reset visibility
     for cx in range(self._width):
       for cy in range(self._height):
@@ -125,7 +123,7 @@ class TileMap(object):  # {{{
           else:
             self._tiles[cx][cy].visible = False
 
-  def los(self, x1, y1, x2, y2):
+  def los(self, x1, y1, x2, y2): #{{{2
     """ returns True if you can see from (x1, y1) to (x2, y2) """
     if x1 == x2 and y1 == y2:
       return True
@@ -168,11 +166,11 @@ class TileMap(object):  # {{{
             return False
 
 
-  def random(self, seed=None):
+  def random(self, seed=None): #{{{2
     rand = rnd.Random(seed)
     failcount = 0
     last = None
-    while failcount <= 15:
+    while failcount <= 25:
       # generate a room
       _width, _height = rand.randrange(2, self._width // 3), rand.randrange(2, self._height // 3)
       top, left = rand.randrange(1, self._height - _height - 2), rand.randrange(1, self._width - _width - 2)
@@ -247,5 +245,4 @@ class TileMap(object):  # {{{
     # return center of last room (maybe the player wants to start here).
     return last
 
-# }}}
 
