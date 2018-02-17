@@ -89,6 +89,8 @@ def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
   if not ch in _tileset:
     if ch == '#':
       tile_surface = _tiles.tiles[(9, 14)]
+    elif ch == '.':
+      tile_surface = _tiles.tiles[(7, 14)]
     else: tile_surface = _font.render(ch, True, fg)
     _tileset.update({ch: tile_surface})
   # This creates a new surface with text already drawn onto it. 
