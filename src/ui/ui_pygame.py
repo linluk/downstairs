@@ -1,8 +1,6 @@
 import pygame
 from pygame.locals import *
 
-from sprites import Wall
-
 import time
 
 import defs
@@ -35,7 +33,6 @@ _screen = None
 _font = None
 _message = pygame.Surface((defs.MESSAGE_W, defs.MESSAGE_H))  # init message surface
 _line = pygame.Surface((400, 12))  # showing inputs from user when ':'
-_wall = Wall(GRAY, 12, 12)
 
 _kbc = {  # keyboard codes -> _kbc dictionary for differs in pygame and ncurses keycodes
   K_RETURN: ord('\n'),
