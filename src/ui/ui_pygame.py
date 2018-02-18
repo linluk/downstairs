@@ -15,15 +15,15 @@ BLACK = (0, 0, 0)
 
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
-ORANGE = (255, 255, 255)
-BLUE = (0, 0, 255)
-VIOLET = (255, 255, 255)
-CYAN = (255, 255, 255)
+ORANGE = (0, 0, 0)
+BLUE = (0, 0, 0)
+VIOLET = (0, 0, 0)
+CYAN = (0, 0, 0)
 GRAY = (100, 100, 100)
-LIGHT_RED = (255, 255, 255)
-LIGHT_GREEN = (255, 255, 255)
-YELLOW = (255, 255, 255)
-LIGHT_BLUE = (255, 255, 255)
+LIGHT_RED = (0, 0, 0)
+LIGHT_GREEN = (0, 0, 0)
+YELLOW = (0, 0, 0)
+LIGHT_BLUE = (0, 0, 0)
 
 BOLD = 0
 
@@ -34,6 +34,7 @@ _screen = None
 _font = None
 _message = pygame.Surface((defs.MESSAGE_W, defs.MESSAGE_H))  # init message surface
 _line = pygame.Surface((400, 12))  # showing inputs from user when ':'
+_stati_line = pygame.Surface((defs.SCREEN_W * SIZE_OFFSET_X, 20))
 _tiles = Tiles(u"../res/marching-tiles.gif", 12, 1) # tile class
 _tiles.get_tiles()
 
@@ -51,7 +52,7 @@ def start():
   global _font
   pygame.init()
   pygame.font.init()
-  _font = pygame.font.SysFont('Comic Sans MS', 20)  # pixel size ???
+  _font = pygame.font.SysFont('Verdana', 14)  # pixel size ???
   _screen = pygame.display.set_mode((defs.SCREEN_W * SIZE_OFFSET_X, defs.SCREEN_H * SIZE_OFFSET_Y))
   pygame.display.set_caption('Roguelike')
 
@@ -73,6 +74,11 @@ def getch():
       elif event.type == KEYDOWN:
         # _kbc dictionary for differs in pygame and ncurses keycodes
         return _kbc.get(event.key, event.key)
+    #start message line
+    all_keys = pygame.key.get_pressed()
+    if all_keys[pygame.K_PERIOD] and (all_keys[pygame.K_LSHIFT] or all_keys[pygame.K_RSHIFT]):
+      return ord(':')
+
     time.sleep(0.01)
 
     # TODO: dictionary von surfaces bei erstem mal dazufügen dann muss man nicht jedesmal rendern
@@ -86,13 +92,17 @@ def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
   global _tiles
   # render(text, antialias, color, background=None)
   # a dictionary of rendered tiles, so i just render every tile once
-  if not ch in _tileset:
-    if ch == '#':
-      tile_surface = _tiles.tiles[(9, 14)]
-    elif ch == '.':
-      tile_surface = _tiles.tiles[(7, 14)]
-    else: tile_surface = _font.render(ch, True, fg)
-    _tileset.update({ch: tile_surface})
+  # AHHH didnt work because if rendered it only once it keeps the color
+  # and the far more distant tiles are not grayed anymore
+  #if not ch in _tileset:
+    # possibility to use graphic tiles instead of rendered fonts
+    # if ch == '#':
+    #   tile_surface = _tiles.tiles[(9, 14)]
+    # elif ch == '.':
+    #   tile_surface = _tiles.tiles[(7, 14)]
+    # :else
+  tile_surface = _font.render(ch, True, fg)
+  _tileset.update({ch: tile_surface})
   # This creates a new surface with text already drawn onto it.
   # At the end you can just blit the text surface onto your screen.
   # blit(source, dest, area=None, special_flags = 0)
@@ -106,39 +116,35 @@ def clear():
 
   # TODO: getline implementieren in pygame kommt aus command.py
 
-
 def getline():
   global _screen
-  line = ''
-  drawline('::')
+  global old_line
+  line = '::'
+  drawline(line)
+  pygame.event.clear()
   while True:
     for event in pygame.event.get():
       if event.type == KEYDOWN:
         if event.key == K_RETURN:
-          clear()
-          return line
+          drawline(line, True)# clear()
+          return line[2:] # remove colons
+        elif event.key == K_BACKSPACE:
+          line = line[:-1]
+          drawline(line)
         else:
           line += chr(event.key)
           drawline(line)
     time.sleep(0.01)
-  # win = curses.newwin(defs.INPUT_H, defs.INPUT_W, defs.INPUT_Y, defs.INPUT_X)
-  # curses.curs_set(1)
-  # txtbox = curses.textpad.Textbox(win)
-  # line = txtbox.edit().strip()
-  # win.clear() # this is not needed! or is it?
-  # del win
-  # curses.curs_set(0)
-  # _screen.touchwin()
-  # return line
 
 
-def drawline(line):
+def drawline(line, isDone = False):
   global _screen
   global _line
   _line.fill(BLACK)
-  _line = _font.render(line, True, WHITE)
-  _screen.blit(_line, (5, 20))
-  pygame.display.update()
+  if not isDone:
+    _line = _font.render(line, True, WHITE)
+  _screen.blit(_line, (5, 40))
+  pygame.display.update((5, 40, pygame.display.get_surface().get_width() - 5, 20))
 
 
 def message(msg):
@@ -151,7 +157,12 @@ def message(msg):
 
 def stats(line):
   global _screen
-  # _screen.addstr(defs.STATS_Y, defs.STATS_X, line)
+  global _stati_line
+  _stati_line.fill(BLACK)
+  _stati_line = _font.render(line, True, WHITE)
+  _screen.blit(_stati_line, (5, 20))
+  pygame.display.update((defs.STATS_Y,defs.STATS_X, defs.SCREEN_W * SIZE_OFFSET_X, 20))
+
 
 
 # this section only for testing
