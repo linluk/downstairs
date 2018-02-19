@@ -169,11 +169,7 @@ class Turn(BaseSystem):  # {{{1
 
   def _take(self, entity: ecs.Entity, entities: Set[ecs.Entity]) -> None:
     action = entity.get_component(components.Action)
-    do_take = False
-    if action is not None:
-      if action.take:
-        do_take = True
-    if not do_take:
+    if not action.take:
       return
     entity.remove_component(components.Action)
     equipment = entity.get_component(components.Equipment) # type: components.Equipment
@@ -213,6 +209,10 @@ class Turn(BaseSystem):  # {{{1
                 # TODO: handle death!!
                 ui.message('you died!')
               else:
+                corpse = ecs.Entity()
+                corpse.add_component(components.Position(cx, cy))
+                corpse.add_component(components.Graphics('%', ui.RED, st=ui.BOLD))
+                entities.insert(1, corpse) # insert, not append, to draw early
                 entities.remove(e)
                 ui.message('{} killed {}'.format(hash(entity), hash(e)))
             else:
@@ -237,7 +237,7 @@ class Turn(BaseSystem):  # {{{1
     self._current_entities = entities
     self._call_sub(self._move_or_attack, [components.Position, components.MoveOrAttack])
     self._call_sub(self._open_or_close_door, [components.Door])
-    self._call_sub(self._take, [components.Equipment, components.Position])
+    self._call_sub(self._take, [components.Action, components.Equipment, components.Position])
 
   def _do_on_moved(self, entity: ecs.Entity) -> None:
     if self._on_moved is not None:
