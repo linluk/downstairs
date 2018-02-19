@@ -9,6 +9,8 @@ import ui.commands
 from ui.commands import Commands
 import components
 
+import gameover
+
 import defs
 import level
 import state_manager
@@ -206,8 +208,8 @@ class Turn(BaseSystem):  # {{{1
 
             if other_combat_stats.HP <= 0:
               if e.has_component(components.Player):
-                # TODO: handle death!!
-                ui.message('you died!')
+                self.state_manager.add_state(gameover.Gameover()) # TODO: alles mögliche zur anzeige im game over screen übergeben
+                self.state_manager.change_state(gameover.Gameover)
               else:
                 corpse = ecs.Entity()
                 corpse.add_component(components.Position(cx, cy))
