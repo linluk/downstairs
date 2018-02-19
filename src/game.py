@@ -103,6 +103,7 @@ class Game(state.State):
     c.HPM = 25
     c.HP = c.HPM
     e.add_component(c)
+    e.add_component(components.Equipment())
     self.calc_fov_if_player(e)
 
     self._entity_list = [e]

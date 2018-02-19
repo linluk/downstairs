@@ -145,6 +145,33 @@ class Ai(ecs.Component):
   move_or_attack = property(lambda s: s._move_or_attack, _set_move_or_attack)
 
 
+class Weight(ecs.Component):
+  def __init__(self, weight: float) -> None:
+    super().__init__()
+    self._weight = weight # type: float
+
+  def _set_weight(self, weight: float):
+    self._weight = weight
+
+  weight = property(lambda s: s._weight, _set_weight)
+
+class Equipment(ecs.Component):
+  def __init__(self) -> None:
+    super().__init__()
+    self._items = [] # type: List[esc.Entity]
+
+  items = property(lambda s: s._items)
+
+
+class Action(ecs.Component):
+  def __init__(self, **kwargs):
+    super().__init__()
+    self._take = kwargs.get('take', False)
+
+  take = property(lambda s: s._take)
+
+
+
 
 
 all_components = [cls for cls in utils.classes_from_module(__name__, lambda c: issubclass(c, ecs.Component))]

@@ -65,7 +65,8 @@ class UserInput(BaseSystem):  # {{{1
             door = components.Door()
             entity.add_component(door)
           door.xy = (position.x + dx, position.y + dy)
-
+    elif cmd == Commands.TAKE:
+      entity.add_component(components.Action(take=True))
     else:
       ui.message('command not implemented!')
 
@@ -166,6 +167,26 @@ class Turn(BaseSystem):  # {{{1
     if relevant_entity:
       method(entity, self._current_entities)
 
+  def _take(self, entity: ecs.Entity, entities: Set[ecs.Entity]) -> None:
+    action = entity.get_component(components.Action)
+    do_take = False
+    if action is not None:
+      if action.take:
+        do_take = True
+    if not do_take:
+      return
+    entity.remove_component(components.Action)
+    equipment = entity.get_component(components.Equipment) # type: components.Equipment
+    position = entity.get_component(components.Position)
+    candidates = [e for e in self.entities_at_position(position.x, position.y, entities) if e.has_component(components.Weight)]
+    if len(candidates) > 0:
+      # TODO: wenn mehr als ein candidate fragen welcher aufgenommen werden soll
+      item = candidates[0]
+      item.remove_component(components.Position)
+      equipment.items.append(item)
+
+
+
   def _move_or_attack(self, entity: ecs.Entity, entities: Set[ecs.Entity]) -> None:
     position = entity.get_component(components.Position) # type: components.Position
     move_or_attack = entity.get_component(components.MoveOrAttack) # type: components.MoveOrAttack
@@ -216,6 +237,7 @@ class Turn(BaseSystem):  # {{{1
     self._current_entities = entities
     self._call_sub(self._move_or_attack, [components.Position, components.MoveOrAttack])
     self._call_sub(self._open_or_close_door, [components.Door])
+    self._call_sub(self._take, [components.Equipment, components.Position])
 
   def _do_on_moved(self, entity: ecs.Entity) -> None:
     if self._on_moved is not None:
