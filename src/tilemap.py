@@ -121,6 +121,8 @@ class TileMap(object):  # {{{1
   tiles = property(lambda s: s._tiles)
   width = property(lambda s: s._width)
   height = property(lambda s: s._height)
+  stairs_down = property(lambda s: s._stairs_down)
+  stairs_up = property(lambda s: s._stairs_up)
 
   def fov(self, x, y, r): #{{{2
     # reset visibility
