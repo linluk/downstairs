@@ -155,7 +155,7 @@ class Weight(ecs.Component):
 
   weight = property(lambda s: s._weight, _set_weight)
 
-class Equipment(ecs.Component):
+class Items(ecs.Component):
   def __init__(self) -> None:
     super().__init__()
     self._items = [] # type: List[esc.Entity]
@@ -169,6 +169,7 @@ class Action(ecs.Component):
     self._take = kwargs.get('take', False)
 
   take = property(lambda s: s._take)
+
 
 
 

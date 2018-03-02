@@ -15,7 +15,7 @@ def create_orc(x: int, y: int) -> ecs.Entity:
   c = components.CombatStats()
   c.ATK = 10
   c.DEF = 10
-  c.HPM = 10
+  c.HPM = 1
   c.HP = c.HPM
   e.add_component(c)
   e.add_component(components.Blocking())
@@ -31,7 +31,7 @@ def create_snake(x: int, y: int) -> ecs.Entity:
   c = components.CombatStats()
   c.ATK = 10
   c.DEF = 10
-  c.HPM = 10
+  c.HPM = 1
   c.HP = c.HPM
   e.add_component(c)
   e.add_component(components.Blocking())
