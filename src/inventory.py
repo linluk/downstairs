@@ -33,18 +33,13 @@ class Inventory(state.State):
     if cmd == ui.commands.Commands.NORTH:
       self._idx -= 1
       if self._idx < 0:
-        self._idx = len(self._items) - 1
+        self._idx = len(self._items.items) - 1
     if cmd == ui.commands.Commands.SOUTH:
       self._idx += 1
-      if self._idx >= len(self._items):
+      if self._idx >= len(self._items.items):
         self._idx = 0
     if cmd == ui.commands.Commands.OK:
       self.state_manager.change_state(game.Game)
-      # state = self._inventory_items[self._idx].state
-      # if state is None:
-      #   self.state_manager.terminate_main_loop()
-      # else:
-      #   self.state_manager.change_state(state)
 
   def update(self) -> None:
     pass

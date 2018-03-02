@@ -38,5 +38,6 @@ class StateManager(object):
       self._current.render()
       self._current.input()
       self._current.update()
-
+  current = property (lambda self: self._current)
+  next = property (lambda self: self._next)
 

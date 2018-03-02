@@ -26,6 +26,7 @@ class Commands(enum.Enum):
   WEST = auto()
   OPEN = auto()
   TAKE = auto()
+  INVENTORY = auto()
   OK = auto()
 
   def is_direction(self):
@@ -68,6 +69,7 @@ def init_commands():
   _(Commands.WEST, 'west', 'h')
   _(Commands.OPEN, 'open', 'o')
   _(Commands.TAKE, 'take', 't')
+  _(Commands.INVENTORY, 'inventory', 'i')
   _(Commands.OK, 'ok', '\n')
 
 
