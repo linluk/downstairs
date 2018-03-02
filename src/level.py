@@ -11,7 +11,7 @@ class Level(object):
   def __init__(self) -> None:
     super().__init__()
     self._tilemap = tilemap.TileMap(defs.LEVEL_W, defs.LEVEL_H)
-    self._entry = self._tilemap.random(123)
+    self._entry = self._tilemap.random()
 
   def is_blocked(self, x: int, y: int) -> bool:
     t = self._tilemap.get_tile(x, y)

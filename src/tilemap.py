@@ -25,6 +25,11 @@ DOOR_CLOSE_SHADOW = Graphic('+', ui.GRAY, ui.BLACK, 0)
 DOOR_OPEN = Graphic(',', ui.WHITE, ui.BLACK, 0)
 DOOR_OPEN_SHADOW = Graphic(',', ui.GRAY, ui.BLACK, 0)
 
+STAIR_DOWN = Graphic('>', ui.WHITE, ui.BLACK, 0)
+STAIR_DOWN_SHADOW = Graphic('>', ui.GRAY, ui.BLACK, 0)
+
+STAIR_UP = Graphic('<', ui.WHITE, ui.BLACK, 0)
+STAIR_UP_SHADOW = Graphic('<', ui.GRAY, ui.BLACK, 0)
 
 class Tile(object):  # {{{1
   __slots__ = ('_blocks', '_opaque', '_graphic_shadow', '_graphic', '_explored', '_visible') # type: ignore
@@ -63,6 +68,13 @@ class WallTile(Tile):
   def __init__(self):
     super().__init__(True, True, WALL, WALL_SHADOW)
 
+class StairsDownTile(Tile):
+  def __init__(self):
+    super().__init__(False, False, STAIR_DOWN, STAIR_DOWN_SHADOW)
+
+class StairsUpTile(Tile):
+  def __init__(self):
+    super().__init__(False, False, STAIR_UP, STAIR_UP_SHADOW)
 
 class Door(Tile):
   __slots__ = ('_closed') # type: ignore
@@ -86,12 +98,15 @@ class Door(Tile):
 
 
 class TileMap(object):  # {{{1
-  __slots__ = ('_width', '_height', '_tiles')
+  __slots__ = ('_width', '_height', '_tiles', '_stairs_down', '_stairs_up')
   def __init__(self, width: int = 79, height: int = 35) -> None:
     super().__init__()
     self._width = width
     self._height = height
+    self._stairs_down = []
+    self._stairs_up = []
     self._tiles = [[None for y in range(height)] for x in range(width)]
+
 
   def get_tile(self, x: int, y: int) -> Tile:
     return self._tiles[x][y]
@@ -220,8 +235,21 @@ class TileMap(object):  # {{{1
               door = False
             else:
               self._tiles[act[0]][y] = FloorTile()
+      else:
+        #we are in the "first room"
+        # so we should have stairs down
+        stair_x, stair_y = left + rand.randrange(1, _width), top + rand.randrange(1, _height)
+        self._tiles[stair_x][stair_y] = StairsDownTile()
+        self._stairs_down.append((stair_x, stair_y))
       # save the act. center as last
       last = (left + rand.randrange(1, _width), top + rand.randrange(1, _height))
+
+    # we generated all rooms
+    # so we add stairs up
+    stair_x, stair_y = left + rand.randrange(1, _width), top + rand.randrange(1, _height)
+    self._tiles[stair_x][stair_y] = StairsUpTile()
+    self._stairs_up.append((stair_x, stair_y))
+
     # draw walls around floors
     for x in range(self._width):
       for y in range(self._height):
