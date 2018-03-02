@@ -10,7 +10,7 @@ class Gameover(state.State):
 
   def render(self) -> None:
     ui.clear()
-    ui.addch(5, 5, 'you died !!!', ui.RED, ui.RED, ui.BOLD)
+    ui.addch(5, 5, 'you died !!!', ui.RED, ui.BLACK, ui.BOLD)
 
   def input(self) -> None:
     cmd = ui.commands.getcmd()

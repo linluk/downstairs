@@ -1,7 +1,7 @@
 
 from typing import Tuple
 
-import utils
+import helper
 
 import ui
 import ecs
@@ -175,7 +175,7 @@ class Action(ecs.Component):
 
 
 
-all_components = [cls for cls in utils.classes_from_module(__name__, lambda c: issubclass(c, ecs.Component))]
+all_components = [cls for cls in helper.classes_from_module(__name__, lambda c: issubclass(c, ecs.Component))]
 
 ##############################################################################
 ##############################################################################
