@@ -14,6 +14,7 @@ import gameover
 import defs
 import level
 import state_manager
+import inventory
 
 class BaseSystem(ecs.System): # {{{1
   """ base class for game systems (game dependencies i dont want to have in the ecs module) """
@@ -69,6 +70,9 @@ class UserInput(BaseSystem):  # {{{1
           door.xy = (position.x + dx, position.y + dy)
     elif cmd == Commands.TAKE:
       entity.add_component(components.Action(take=True))
+    elif cmd == Commands.INVENTORY:
+      self.state_manager.change_state(inventory.Inventory)
+      self.state_manager.next.set_items(entity.get_component(components.Items))
     else:
       ui.message('command not implemented!')
 
@@ -215,6 +219,8 @@ class Turn(BaseSystem):  # {{{1
                 corpse = ecs.Entity()
                 corpse.add_component(components.Position(cx, cy))
                 corpse.add_component(components.Graphics('%', ui.RED, st=ui.BOLD))
+                corpse.add_component(components.Weight(1))
+                corpse.add_component(components.Name(e.get_component(components.Name).name +' Corpse'))
                 entities.insert(1, corpse) # insert, not append, to draw early
                 entities.remove(e)
                 ui.message('{} killed {}'.format(hash(entity), hash(e)))

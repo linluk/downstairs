@@ -16,3 +16,5 @@ def _basic(name: str, weight: float,  ch: str, fg: int, bg: int) -> ecs.Entity:
 def create_potion_of_healing() -> ecs.Entity:
   return _basic('Potion of Healing', 1.0, '!', ui.RED, ui.BLACK)
 
+def scroll_of_amnesia() -> ecs.Entity:
+  return _basic('Scroll of Amnesia', 0.5, '?', ui.RED. ui.BLACK)
