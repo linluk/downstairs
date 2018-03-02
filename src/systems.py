@@ -143,6 +143,7 @@ class Turn(BaseSystem):  # {{{1
 
 
   def is_blocked(self, x: int, y: int, entities: Set[ecs.Entity] = None) -> bool:
+
     if self._do_check_blocked(x, y):
       return True
     for e in self.entities_at_position(x, y, entities):

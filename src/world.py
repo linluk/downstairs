@@ -2,13 +2,12 @@
 import level
 
 class World(object):
-  def __init__(self) -> None:
-    super().__init__()
-    self._levels = {} # type: Dict[int, level.Level]
+    def __init__(self) -> None:
+        super().__init__()
+        lvl = level.Level()
+        self._current = lvl.ID
+        self._levels = {lvl.ID: lvl} # type: Dict[int, level.Level]
 
-  def create_levels(self):
-    curr = level.Level()
-    for i in range(10):
-      lvl = level.Level()
-      #curr.stairs_down
+    current = property(lambda s: s._levels[s._current])
+
 

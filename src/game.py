@@ -7,7 +7,7 @@ import defs
 
 
 
-import level
+import world
 
 import sys
 
@@ -27,7 +27,7 @@ class Game(state.State):
 
   def __init__(self):
     super().__init__()
-    self.level = level.Level()
+    self.world = world.World()
 
     self._entity_list = []
 
@@ -35,7 +35,7 @@ class Game(state.State):
     self._user_input.on_quit = self.quit
 
     self._turn = systems.Turn()
-    self._turn.check_blocked = self.level.is_blocked
+    self._turn.check_blocked = self.world.current.is_blocked ## TODO : fix for world
     self._turn.on_moved = self.moved
     self._turn.toggle_door = self.toggle_door
 
@@ -43,15 +43,15 @@ class Game(state.State):
     self._ai.line_of_sight = self.line_of_sight
 
     self._rendering = systems.Rendering(defs.LEVEL_X, defs.LEVEL_Y)
-    self._rendering.check_visible = self.level.is_visible
+    self._rendering.check_visible = self.world.current.is_visible ## TODO : fix for world
 
   def line_of_sight(self, x1: int, y1: int, x2: int, y2: int) -> bool:
-    return self.level.tilemap.los(x1, y1, x2, y2)
+      return self.world.current.tilemap.los(x1, y1, x2, y2) ## TODO : fix for world
 
   def calc_fov_if_player(self, entity: ecs.Entity):
     if entity.has_component(components.Player):
       sight = entity.get_component(components.Sight) # type: components.Sight
-      self.level.tilemap.fov(*entity.get_component(components.Position).xy, sight.radius)
+      self.world.current.tilemap.fov(*entity.get_component(components.Position).xy, sight.radius) ## TODO : fix for world
 
 
   def quit(self):
@@ -62,7 +62,7 @@ class Game(state.State):
     self.calc_fov_if_player(entity)
 
   def toggle_door(self, entity, x, y):
-    t = self.level.tilemap.get_tile(x, y)
+    t = self.world.current.tilemap.get_tile(x, y) ## TODO : fix for world
     if isinstance(t, tilemap.Door):
       t.toggle()
       self.calc_fov_if_player(entity)
@@ -70,15 +70,15 @@ class Game(state.State):
     return False
 
   def render(self) -> None:
-    self._rendering.execute(self.level, self.state_manager, self._entity_list)
+      self._rendering.execute(self.world.current, self.state_manager, self._entity_list) ## TODO : fix for world
 
 
   def input(self) -> None:
-    self._user_input.execute(self.level, self.state_manager, self._entity_list)
+      self._user_input.execute(self.world.current, self.state_manager, self._entity_list) ## TODO : fix for world
 
   def update(self) -> None:
-    self._ai.execute(self.level, self.state_manager, self._entity_list)
-    self._turn.execute(self.level, self.state_manager, self._entity_list)
+    self._ai.execute(self.world.current, self.state_manager, self._entity_list) ## TODO : fix for world
+    self._turn.execute(self.world.current, self.state_manager, self._entity_list) ## TODO : fix for world
 
   def leave(self) -> None:
     pass
@@ -91,7 +91,7 @@ class Game(state.State):
     e.add_component(c)
     c = components.MoveOrAttack()
     e.add_component(c)
-    c = components.Position(*self.level.entry)
+    c = components.Position(*self.world.current.entry) ## TODO : fix for world
     e.add_component(c)
     c = components.Graphics('@', ui.WHITE, ui.BLACK, ui.BOLD)
     e.add_component(c)
@@ -112,7 +112,7 @@ class Game(state.State):
       rand = rnd.Random()
       for i in range(100):
         x, y = rand.randrange(1, defs.LEVEL_W - 2), rand.randrange(1, defs.LEVEL_H - 2)
-        if not self.level.is_blocked(x, y):
+        if not self.world.current.is_blocked(x, y): ## TODO : fix for world
           if rand.chance():
             e = monsters.create_orc(x, y)
           else:
@@ -123,7 +123,7 @@ class Game(state.State):
       rand = rnd.Random()
       for i in range(100):
         x, y = rand.randrange(1, defs.LEVEL_W - 2), rand.randrange(1, defs.LEVEL_H - 2)
-        if not self.level.is_blocked(x, y):
+        if not self.world.current.is_blocked(x, y): ## TODO : fix for world
           e = items.create_potion_of_healing()
           c = components.Position(x, y)
           e.add_component(c)
