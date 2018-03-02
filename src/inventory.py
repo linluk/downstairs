@@ -38,7 +38,7 @@ class Inventory(state.State):
       self._idx += 1
       if self._idx >= len(self._items.items):
         self._idx = 0
-    if cmd == ui.commands.Commands.OK:
+    if cmd == ui.commands.Commands.OK or cmd == ui.commands.Commands.QUIT:
       self.state_manager.change_state(game.Game)
 
   def update(self) -> None:

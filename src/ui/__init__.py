@@ -1,3 +1,6 @@
+from args import args
 
-#from .ui_curses import *
-from .ui_pygame import *
+if args.commandline:
+  from .ui_curses import *
+if args.ascii:
+  from .ui_pygame import *

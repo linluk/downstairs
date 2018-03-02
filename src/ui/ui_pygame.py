@@ -29,14 +29,17 @@ LIGHT_BLUE = (66, 116, 255)
 
 BOLD = 0
 
+MESSAGE_RECT = defs.MESSAGE_W * SIZE_OFFSET_X, defs.MESSAGE_H * SIZE_OFFSET_Y
+
 # just for compiling
 NORMAL = 1
 
 _screen = None
 _font = None
-_message = pygame.Surface((defs.MESSAGE_W, defs.MESSAGE_H))  # init message surface
+_message = pygame.Surface(MESSAGE_RECT)  # init message surface
 _line = pygame.Surface((400, 12))  # showing inputs from user when ':'
 _stati_line = pygame.Surface((defs.SCREEN_W * SIZE_OFFSET_X, 20))
+_msg = None
 
 _kbc = {  # keyboard codes -> _kbc dictionary for differs in pygame and ncurses keycodes
   K_RETURN: ord('\n'),
@@ -118,8 +121,8 @@ def addch(x, y, ch, fg=WHITE, bg=BLACK, style=NORMAL):
 def clear():
   global _screen
   _screen.fill((0, 0, 0))  # fill screen with black color
-  # if _message is not None: # TODO: messaging system implement
-  #   message(_message)
+  if _msg is not None:
+    message(_msg)
 
   # TODO: getline implementieren in pygame kommt aus command.py
 
@@ -157,9 +160,13 @@ def drawline(line, isDone = False):
 def message(msg):
   global _screen
   global _message
+  global _msg
   _message.fill(BLACK)
-  _message = _font.render(msg, True, WHITE)
-  _screen.blit(_message, (defs.MESSAGE_X, defs.MESSAGE_Y))
+  if msg is not None:
+    _message = _font.render(msg, True, LIGHT_RED)
+    _screen.blit(_message, (0, 0))
+  pygame.display.update((0, 0, *MESSAGE_RECT))
+  _msg = msg
 
 
 def stats(line):
