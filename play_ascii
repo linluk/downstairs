@@ -1,7 +1,7 @@
 
 . venv/bin/activate
 cd src/
-python3 roguelike.py
+python3 roguelike.py --ascii
 cd ..
 deactivate
 

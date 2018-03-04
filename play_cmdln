@@ -1,0 +1,7 @@
+
+. venv/bin/activate
+cd src/
+python3 roguelike.py --commandline
+cd ..
+deactivate
+
