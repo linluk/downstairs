@@ -11,6 +11,7 @@ import components
 
 import gameover
 
+import utils
 import defs
 import level
 import state_manager
@@ -220,7 +221,7 @@ class Turn(BaseSystem):  # {{{1
                 corpse.add_component(components.Position(cx, cy))
                 corpse.add_component(components.Graphics('%', ui.RED, st=ui.BOLD))
                 corpse.add_component(components.Weight(1))
-                corpse.add_component(components.Name(e.get_component(components.Name).name +' Corpse'))
+                corpse.add_component(components.Name('{} {}'.format(utils.name(e), 'Corpse').strip()))
                 entities.insert(1, corpse) # insert, not append, to draw early
                 entities.remove(e)
                 ui.message('{} killed {}'.format(hash(entity), hash(e)))
