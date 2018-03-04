@@ -1,6 +1,6 @@
-from args import args
+import args
 
-if args.commandline:
+if args.cmdln_mode:
   from .ui_curses import *
-if args.ascii:
+if args.ascii_mode:
   from .ui_pygame import *
