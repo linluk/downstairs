@@ -1,0 +1,16 @@
+
+key q quit
+key . skip
+key z north-west
+key k north
+key u north-east
+key l east
+key n south-east
+key j south
+key b south-west
+key h west
+key o open
+key t take
+key i inventory
+key a ok
+

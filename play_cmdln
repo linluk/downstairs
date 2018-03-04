@@ -1,7 +1,7 @@
 
 . venv/bin/activate
 cd src/
-python3 roguelike.py --commandline
+python3 roguelike.py --commandline --keymap ../keymap
 cd ..
 deactivate
 

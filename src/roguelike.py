@@ -9,26 +9,33 @@ import state_manager
 
 try:
 
-  ui.start()
-  ui.commands.init_commands()
+    ui.start()
+    ui.commands.init_commands()
 
-  g = game.Game()
-  m = menu.Menu()
-  i = inventory.Inventory()
+    g = game.Game()
+    m = menu.Menu()
+    i = inventory.Inventory()
 
-  m.add_item('Start', game.Game)
-  m.add_item('Quit', None)
+    m.add_item('Start', game.Game)
+    m.add_item('Quit', None)
 
-  sm = state_manager.StateManager()
-  sm.add_state(m)
-  sm.add_state(g)
-  sm.add_state(i)
-  sm.change_state(menu.Menu)
+    sm = state_manager.StateManager()
+    sm.add_state(m)
+    sm.add_state(g)
+    sm.add_state(i)
+    sm.change_state(menu.Menu)
 
-  sm.main_loop()
+    sm.main_loop()
+
+#    ch = ui.getch()
+#    while ch != ui.curses.KEY_ENTER:
+#        ui.clear()
+#        ui.addch(3, 3, str(ch))
+#        ch = ui.getch()
+
 
 finally:
-  ui.stop()
+    ui.stop()
 
 print('Thanks for playing :-)')
 

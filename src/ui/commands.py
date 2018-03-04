@@ -1,4 +1,8 @@
 
+import re
+
+import args
+
 import ui
 import enum
 
@@ -56,22 +60,38 @@ def __init_cmd(value, command, shortcut=None):
   commands[command] = value
 
 def init_commands():
-  _ = __init_cmd
-  _(Commands.QUIT, 'quit', 27)
-  _(Commands.SKIP, 'skip', '.')
-  _(Commands.NORTH_WEST, 'north west', 'z') # TODO: this is german KB specific
-  _(Commands.NORTH, 'north', 'k')
-  _(Commands.NORTH_EAST, 'north east', 'u')
-  _(Commands.EAST, 'east', 'l')
-  _(Commands.SOUTH_EAST, 'south east', 'n')
-  _(Commands.SOUTH, 'south', 'j')
-  _(Commands.SOUTH_WEST, 'south west', 'b')
-  _(Commands.WEST, 'west', 'h')
-  _(Commands.OPEN, 'open', 'o')
-  _(Commands.TAKE, 'take', 't')
-  _(Commands.INVENTORY, 'inventory', 'i')
-  _(Commands.OK, 'ok', '\n')
+#    _ = __init_cmd
+#    _(Commands.QUIT, 'quit', 27)
+#    _(Commands.SKIP, 'skip', '.')
+#    _(Commands.NORTH_WEST, 'north-west', 'z') # TODO: this is german KB specific
+#    _(Commands.NORTH, 'north', 'k')
+#    _(Commands.NORTH_EAST, 'north-east', 'u')
+#    _(Commands.EAST, 'east', 'l')
+#    _(Commands.SOUTH_EAST, 'south-east', 'n')
+#    _(Commands.SOUTH, 'south', 'j')
+#    _(Commands.SOUTH_WEST, 'south-west', 'b')
+#    _(Commands.WEST, 'west', 'h')
+#    _(Commands.OPEN, 'open', 'o')
+#    _(Commands.TAKE, 'take', 't')
+#    _(Commands.INVENTORY, 'inventory', 'i')
+#    _(Commands.OK, 'ok', '\n')
+    cmds = {str(c.name.lower()).replace('_', '-'): c for c in Commands}
+    #print(cmds)
 
+    for cmd in cmds:
+        __init_cmd(cmds[cmd], cmd, None)
+
+    re_key = re.compile(r'[ ]*key[ ]+(\d|\w|\.)[ ]+(\w+)')
+    with open(args.keymap) as f:
+        for line in f:
+            key_match = re_key.match(line)
+            #print(line, key_match)
+            if key_match is not None:
+                shortcut = key_match.group(1)
+                command = key_match.group(2)
+                if shortcut is not None and command is not None and command in cmds:
+                    #print('init_cmd( {} , {}, {} )'.format(cmds[command], command, shortcut))
+                    __init_cmd(cmds[command], command, shortcut)
 
 def getcmd():
   global shortcuts
