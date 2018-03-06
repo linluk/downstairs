@@ -13,7 +13,7 @@ import gameover
 
 import utils
 import defs
-import level
+import world
 import state_manager
 import inventory
 
@@ -21,15 +21,15 @@ class BaseSystem(ecs.System): # {{{1
   """ base class for game systems (game dependencies i dont want to have in the ecs module) """
   def __init__(self, relevant_components: Iterable[ecs.ComponentType], iterate_copy: bool = False) -> None:
     super().__init__(relevant_components, iterate_copy)
-    self._level = None # type: level.Level
+    self._world = None # type: world.World
     self._state_manager = None # type: state_manager.StateManager
 
-  def execute(self, level_: level.Level, state_manager_: state_manager.StateManager, entities: Set[ecs.Entity]):
-    self._level = level_
+  def execute(self, world_: world.World, state_manager_: state_manager.StateManager, entities: Set[ecs.Entity]):
+    self._world = world_
     self._state_manager = state_manager_
     super().execute(entities)
 
-  level = property(lambda s: s._level)
+  world = property(lambda s: s._world)
   state_manager = property(lambda s: s._state_manager)
 
 
@@ -291,7 +291,7 @@ class Rendering(BaseSystem):  # {{{1
   def before(self, entities: Set[ecs.Entity]) -> bool:
     ui.clear()
 
-    for (x, y), t in self.level.tilemap.get_tiles():
+    for (x, y), t in self.world.current.tilemap.get_tiles():
       if t.explored:
         t.draw(x + defs.LEVEL_X, y + defs.LEVEL_Y)
 

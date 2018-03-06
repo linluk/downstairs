@@ -70,15 +70,15 @@ class Game(state.State):
     return False
 
   def render(self) -> None:
-      self._rendering.execute(self.world.current, self.state_manager, self._entity_list) ## TODO : fix for world
+      self._rendering.execute(self.world, self.state_manager, self._entity_list)
 
 
   def input(self) -> None:
-      self._user_input.execute(self.world.current, self.state_manager, self._entity_list) ## TODO : fix for world
+      self._user_input.execute(self.world, self.state_manager, self._entity_list)
 
   def update(self) -> None:
-    self._ai.execute(self.world.current, self.state_manager, self._entity_list) ## TODO : fix for world
-    self._turn.execute(self.world.current, self.state_manager, self._entity_list) ## TODO : fix for world
+    self._ai.execute(self.world, self.state_manager, self._entity_list)
+    self._turn.execute(self.world, self.state_manager, self._entity_list)
 
   def leave(self) -> None:
     pass
