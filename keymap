@@ -1,5 +1,5 @@
 
-key q quit
+key [27] quit
 key . skip
 key z north-west
 key k north
@@ -12,5 +12,6 @@ key h west
 key o open
 key t take
 key i inventory
-key a ok
+key [10] ok
+#key a ok
 

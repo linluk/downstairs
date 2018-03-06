@@ -27,11 +27,11 @@ try:
 
     sm.main_loop()
 
-#    ch = ui.getch()
-#    while ch != ui.curses.KEY_ENTER:
-#        ui.clear()
-#        ui.addch(3, 3, str(ch))
-#        ch = ui.getch()
+    #ch = ui.getch()
+    #while ch != ord(' '):
+    #    ui.clear()
+    #    ui.addch(3, 3, str(ch))
+    #    ch = ui.getch()
 
 
 finally:
