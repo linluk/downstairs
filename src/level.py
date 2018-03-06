@@ -19,8 +19,8 @@ class Level(object):
     self._id = _next_global_level_id()
     self._tilemap = tilemap.TileMap(defs.LEVEL_W, defs.LEVEL_H)
     self._entry = self._tilemap.random()
-    self._stairs_down = {sd: None for sd in self._tilemap.stairs_down}
-    self._stairs_up = {su: None for su in self._tilemap.stairs_up}
+    self._stairs_down = {sd: None for sd in self._tilemap.stairs_down} # type: Dict[Set[int, int], int]
+    self._stairs_up = {su: None for su in self._tilemap.stairs_up} # type: Dict[Set[int, int], int]
 
   def is_blocked(self, x: int, y: int) -> bool:
     t = self._tilemap.get_tile(x, y)
