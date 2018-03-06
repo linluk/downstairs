@@ -35,7 +35,6 @@ class Game(state.State):
     self._user_input.on_quit = self.quit
 
     self._turn = systems.Turn()
-    self._turn.check_blocked = self.world.current.is_blocked ## TODO : fix for world
     self._turn.on_moved = self.moved
     self._turn.toggle_door = self.toggle_door
 
@@ -43,7 +42,6 @@ class Game(state.State):
     self._ai.line_of_sight = self.line_of_sight
 
     self._rendering = systems.Rendering(defs.LEVEL_X, defs.LEVEL_Y)
-    self._rendering.check_visible = self.world.current.is_visible ## TODO : fix for world
 
   def line_of_sight(self, x1: int, y1: int, x2: int, y2: int) -> bool:
       return self.world.current.tilemap.los(x1, y1, x2, y2) ## TODO : fix for world

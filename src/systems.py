@@ -11,6 +11,7 @@ import components
 
 import gameover
 
+import tilemap
 import utils
 import defs
 import world
@@ -74,6 +75,16 @@ class UserInput(BaseSystem):  # {{{1
     elif cmd == Commands.INVENTORY:
       self.state_manager.change_state(inventory.Inventory)
       self.state_manager.next.set_items(entity.get_component(components.Items))
+    elif cmd == Commands.STAIRS:
+        position = entity.get_component(components.Position)
+        tile = self.world.current.tilemap.get_tile(position.x, position.y)
+
+        ### TODO ::: das gehört nicht hier her! AUSLAGERN nach World() zb
+        if isinstance(tile, tilemap.StairsDownTile):
+            self.world._current = self.world.current.stairs_down.get((position.x, position.y), self.world._current)
+        if isinstance(tile, tilemap.StairsUpTile):
+            self.world._current = self.world.current.stairs_up.get((position.x, position.y), self.world._current)
+
     else:
       ui.message('command not implemented!')
 
@@ -140,7 +151,6 @@ class Ai(BaseSystem):  # {{{1
 class Turn(BaseSystem):  # {{{1
   def __init__(self):
     super().__init__([], True)
-    self._check_blocked = None # type: Callable[[int, int], bool]
     self._on_moved = None # type: Callable[[ecs.Entity], None]
     self._toggle_door = None # type Callable[[ecs.Entity, int, int], bool]
     self._current_entity = None # type: ecs.Entity
@@ -149,7 +159,7 @@ class Turn(BaseSystem):  # {{{1
 
   def is_blocked(self, x: int, y: int, entities: Set[ecs.Entity] = None) -> bool:
 
-    if self._do_check_blocked(x, y):
+    if self.world.current.is_blocked(x, y):
       return True
     for e in self.entities_at_position(x, y, entities):
       b = e.get_component(components.Blocking)
@@ -257,16 +267,6 @@ class Turn(BaseSystem):  # {{{1
   def _set_on_moved(self, on_moved: Callable[[ecs.Entity], None]) -> None:
     self._on_moved = on_moved
 
-  def _do_check_blocked(self, x: int, y: int) -> bool:
-    if self._check_blocked is not None:
-      return self._check_blocked(x, y)
-    else:
-      return False
-  def _get_check_blocked(self):
-    return self._check_blocked
-  def _set_check_blocked(self, check_blocked) -> None:
-    self._check_blocked = check_blocked
-
   def _do_toggle_door(self, entity: ecs.Entity, x: int, y: int) -> bool:
     if self._toggle_door is not None:
       return self._toggle_door(entity, x, y)
@@ -277,7 +277,6 @@ class Turn(BaseSystem):  # {{{1
     self._toggle_door = toggle_door
 
   toggle_door = property(_get_toggle_door, _set_toggle_door, doc='should return true when toggled the door')
-  check_blocked = property(_get_check_blocked, _set_check_blocked)
   on_moved = property(_get_on_moved, _set_on_moved)
 
 class Rendering(BaseSystem):  # {{{1
@@ -300,7 +299,7 @@ class Rendering(BaseSystem):  # {{{1
   def update(self, entity: ecs.Entity, entities: Set[ecs.Entity]) -> None:
     position = entity.get_component(components.Position)
     # i do not need to check if position is assigned. i only get entities who has a Position Component.
-    if self._do_check_visible(position.x, position.y):
+    if self.world.current.is_visible(position.x, position.y):
       g = entity.get_component(components.Graphics)
       # i do not need to check if g is assigned. i only get entities who has a Graphics Component.
       ui.addch(position.x + self._offset_x, position.y + self._offset_y, g.ch, g.fg, g.bg, g.st)
@@ -310,18 +309,4 @@ class Rendering(BaseSystem):  # {{{1
       combat_stats = entity.get_component(components.CombatStats) # type: components.CombatStats
       if combat_stats is not None:
         ui.stats(' HP: {:3}  HPM: {:3}\nATK: {:3}  DEF: {:3}'.format(combat_stats.HP, combat_stats.HPM, combat_stats.ATK, combat_stats.DEF))
-
-
-
-  def _do_check_visible(self, x: int, y: int) -> bool:
-    if self._check_visible is not None:
-      return self._check_visible(x, y)
-    else:
-      return False
-  def _get_check_visible(self):
-    return self._check_visible
-  def _set_check_visible(self, check_visible) -> None:
-    self._check_visible = check_visible
-
-  check_visible = property(_get_check_visible, _set_check_visible)
 

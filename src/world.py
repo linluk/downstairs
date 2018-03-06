@@ -19,7 +19,7 @@ class World(object):
                     lvl = level.Level()
                     self._levels[lvl.ID] = lvl
                     parent.stairs_down[stair_pos] = lvl.ID
-                    self.create_downstairs(lvl, floors - 1)
+                    self._downstairs(lvl, floors - 1)
 
 
     current = property(lambda s: s._levels[s._current])
