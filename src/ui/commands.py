@@ -95,7 +95,7 @@ def init_commands():
     #
     # usefull link:  https://regex101.com/
     #
-    re_key = re.compile(r'[ ]*key[ ]+((\d|\w|\.)|\[(\d+)\])[ ]+(\w+)')
+    re_key = re.compile(r'[ ]*key[ ]+((\d|\w|\.)|\[(\d+)\])[ ]+([\d\-\w]+)')
     with open(args.keymap) as f:
         for line in f:
             key_match = re_key.match(line)
