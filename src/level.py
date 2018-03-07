@@ -14,11 +14,11 @@ def _next_global_level_id() -> int:
 
 class Level(object):
 
-  def __init__(self) -> None:
+  def __init__(self, seed=None) -> None:
     super().__init__()
     self._id = _next_global_level_id()
     self._tilemap = tilemap.TileMap(defs.LEVEL_W, defs.LEVEL_H)
-    self._entry = self._tilemap.random()
+    self._entry = self._tilemap.random(seed)
     self._stairs_down = {sd: None for sd in self._tilemap.stairs_down} # type: Dict[Set[int, int], int]
     self._stairs_up = {su: None for su in self._tilemap.stairs_up} # type: Dict[Set[int, int], int]
 
