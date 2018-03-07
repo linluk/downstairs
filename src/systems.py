@@ -15,6 +15,7 @@ import tilemap
 import utils
 import defs
 import world
+import menu
 import state_manager
 import inventory
 
@@ -37,16 +38,7 @@ class BaseSystem(ecs.System): # {{{1
 
 class UserInput(BaseSystem):  # {{{1
   def __init__(self):
-    super().__init__([components.Player])
-    self._on_quit = None # type: Callable[[], None]
-
-  def _do_on_quit(self) -> None:
-    if self._on_quit is not None:
-      self._on_quit()
-  def _get_on_quit(self) -> Callable[[], None]:
-    return self._on_quit
-  def _set_on_quit(self, on_quit: Callable[[], None]) -> None:
-    self._on_quit = on_quit
+      super().__init__([components.Player])
 
   def update(self, entity: ecs.Entity, _unused) -> None:
     cmd = ui.commands.getcmd()
@@ -57,7 +49,7 @@ class UserInput(BaseSystem):  # {{{1
         entity.add_component(move_or_attack)
       move_or_attack.dxdy = cmd.direction_to_dxdy()
     elif cmd == Commands.QUIT:
-      self._do_on_quit()
+      self.state_manager.change_state(menu.Menu)
     elif cmd == Commands.OPEN:
       ui.message('which direction?')
       direction = ui.commands.require_direction()
@@ -71,10 +63,10 @@ class UserInput(BaseSystem):  # {{{1
             entity.add_component(door)
           door.xy = (position.x + dx, position.y + dy)
     elif cmd == Commands.TAKE:
-      entity.add_component(components.Action(take=True))
+        entity.add_component(components.Action(take=True))
     elif cmd == Commands.INVENTORY:
-      self.state_manager.change_state(inventory.Inventory)
-      self.state_manager.next.set_items(entity.get_component(components.Items))
+        self.state_manager.change_state(inventory.Inventory)
+        self.state_manager.next.set_items(entity.get_component(components.Items))
     elif cmd == Commands.STAIRS:
         position = entity.get_component(components.Position)
         tile = self.world.current.tilemap.get_tile(position.x, position.y)
@@ -88,7 +80,6 @@ class UserInput(BaseSystem):  # {{{1
     else:
       ui.message('command not implemented!')
 
-  on_quit = property(_get_on_quit, _set_on_quit)
 
 class Ai(BaseSystem):  # {{{1
   def __init__(self) -> None:

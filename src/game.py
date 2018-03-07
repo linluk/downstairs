@@ -32,7 +32,6 @@ class Game(state.State):
     self._entity_list = []
 
     self._user_input = systems.UserInput()
-    self._user_input.on_quit = self.quit
 
     self._turn = systems.Turn()
     self._turn.on_moved = self.moved
@@ -51,10 +50,6 @@ class Game(state.State):
       sight = entity.get_component(components.Sight) # type: components.Sight
       self.world.current.tilemap.fov(*entity.get_component(components.Position).xy, sight.radius) ## TODO : fix for world
 
-
-  def quit(self):
-    #self.state_manager.terminate_main_loop()
-    self.state_manager.change_state(menu.Menu)
 
   def moved(self, entity: ecs.Entity):
     self.calc_fov_if_player(entity)
