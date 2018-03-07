@@ -32,6 +32,7 @@ class Commands(enum.Enum):
   TAKE = auto()
   INVENTORY = auto()
   OK = auto()
+  STAIRS = auto() # only one Command (not 2 for down and up!!) because at least on german kb < and > is the same key and i never know which needs shift.
 
   def is_direction(self):
     return self in (Commands.NORTH_WEST, Commands.NORTH, Commands.NORTH_EAST, Commands.EAST, Commands.SOUTH_EAST, Commands.SOUTH, Commands.SOUTH_WEST, Commands.WEST)
@@ -81,17 +82,35 @@ def init_commands():
     for cmd in cmds:
         __init_cmd(cmds[cmd], cmd, None)
 
-    re_key = re.compile(r'[ ]*key[ ]+(\d|\w|\.)[ ]+(\w+)')
+    # this regex finds 2 types of keymappings.
+    # first:
+    #  > key j south
+    # which maps the j key to command south
+    # you will find 'j' in group 2
+    #
+    # second:
+    #  > key [66] south
+    # which maps the arrow down key to south
+    # you will find '66' in group 3
+    #
+    # usefull link:  https://regex101.com/
+    #
+    re_key = re.compile(r'[ ]*key[ ]+((\d|\w|\.)|\[(\d+)\])[ ]+(\w+)')
     with open(args.keymap) as f:
         for line in f:
             key_match = re_key.match(line)
-            #print(line, key_match)
             if key_match is not None:
-                shortcut = key_match.group(1)
-                command = key_match.group(2)
-                if shortcut is not None and command is not None and command in cmds:
-                    #print('init_cmd( {} , {}, {} )'.format(cmds[command], command, shortcut))
-                    __init_cmd(cmds[command], command, shortcut)
+                shortcut = None
+                printable = key_match.group(2)
+                key_code = key_match.group(3)
+                if printable is not None:
+                    shortcut = printable
+                elif key_code is not None:
+                    shortcut = int(key_code)
+                command = key_match.group(4)
+                if shortcut is not None and command is not None:
+                    if command in cmds:
+                        __init_cmd(cmds[command], command, shortcut)
 
 def getcmd():
   global shortcuts
