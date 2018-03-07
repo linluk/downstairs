@@ -1,12 +1,20 @@
+#!/usr/bin/env python3
+
 import ui
 import defs
 
 import state
+import game
+import menu
 
+import inventory
+import state_manager
 import time
+
 
 class Intro(state.State):
     def __init__(self):
+        super().__init__()
         self.f_color = (255, 255, 255)
         self.title = """
 ███████╗██╗  ██╗ █████╗ ██████╗  ██████╗ ██╗    ██╗███████╗████████╗███████╗██████╗\n
@@ -36,3 +44,32 @@ class Intro(state.State):
 
     def enter(self) -> None:
         ui.clear()
+
+
+if __name__ == '__main__':
+    try:
+
+        ui.start()
+        ui.commands.init_commands()
+        g = game.Game()
+        m = menu.Menu()
+        intro = Intro()
+        i = inventory.Inventory()
+
+        m.add_item('Start', game.Game)
+        m.add_item('Quit', None)
+
+        sm = state_manager.StateManager()
+        sm.add_state(intro)
+        sm.add_state(m)
+        sm.add_state(g)
+        sm.add_state(i)
+
+
+        sm.change_state(Intro)
+
+        sm.main_loop()
+
+
+    finally:
+        ui.stop()

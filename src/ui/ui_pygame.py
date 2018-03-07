@@ -59,8 +59,8 @@ def start():
     _font = pygame.font.SysFont('Deja Vu Sans Mono', FONT_SIZE)  # pixel size ???
     _screen = pygame.display.set_mode((defs.SCREEN_W * SIZE_OFFSET_X, defs.SCREEN_H * SIZE_OFFSET_Y))
     # load the sprites
-    _tiles = Tiles(_screen, u"res/Redjack17.png", 17, 0)  # tile class
-    _tiles.get_tiles()
+    # _tiles = Tiles(_screen, u"res/Redjack17.png", 17, 0)  # tile class
+    # _tiles.get_tiles()
     pygame.display.set_caption('LinLuk')  # Lindström Liker
 
 
