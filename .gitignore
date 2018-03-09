@@ -1,6 +1,7 @@
 .mypy_cache/
 .idea
 bin/
+tmp/
 venv/
 **/__pycache__/
 **/*.pyc
