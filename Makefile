@@ -50,6 +50,6 @@ docs: $(DOC-FILES)
 
 .PHONY: clean
 clean:
-	rm -r $(DOC-DIR)
-	rm -r $(BIN-DIR)
+	rm  $(DOC-DIR)/*.*
+	rm  $(BIN-DIR)/*.*
 
