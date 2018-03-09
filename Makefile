@@ -24,7 +24,7 @@ SRC-DIR=src
 TMP-DIR=tmp
 SRC-FILE=$(SRC-DIR)/$(NAME).py
 
-PY-CC-FLAGS=--clean --onefile --srtip
+PY-CC-FLAGS=--clean --onefile --strip
 DOC-FLAGS=--from=markdown --to=html --standalone --smart
 
 DOC-SRC-FILES=$(wildcard $(DOC-SRC-DIR)/*.md)
@@ -32,11 +32,13 @@ DOC-FILES=$(patsubst $(DOC-SRC-DIR)/%.md, $(DOC-DIR)/%.html, $(DOC-SRC-FILES))
 
 
 default:
-	source $(VIRTUALENV)/bin/activate
-	$(PY-CC) $(PY-CC-FLAGS) --workpath=$(TMP-DIR) --distpath=$(BIN-DIR) $(SRC-FILE)
-	deactivate
-	rm -r $(TMP-DIR)
-	rm $(NAME).spec
+	( \
+	  . $(VIRTUALENV)/bin/activate ; \
+	  $(PY-CC) $(PY-CC-FLAGS) --workpath=$(TMP-DIR) --distpath=$(BIN-DIR) $(SRC-FILE) ; \
+	  deactivate ; \
+	  rm -r $(TMP-DIR) ; \
+	  rm $(NAME).spec ; \
+	)
 
 
 $(DOC-DIR)/%.html: $(DOC-SRC-DIR)/%.md
