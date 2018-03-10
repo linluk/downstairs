@@ -38,7 +38,7 @@ BUGREPORT {timestamp}
 
 INDENT = '\n' + ' ' * 20
 
-def bugreport(exc_info=None):
+def bugreport(exc_info=None) -> str:
     typ, value, raw_trace = exc_info if exc_info is not None else sys.exc_info()
     trace = ''.join('{}:{}  {}  {}'.format(*frame) for frame in traceback.extract_tb(raw_trace, 32))
 
@@ -70,13 +70,15 @@ def bugreport(exc_info=None):
             system_system=prepare(system))
 
     report_directory = os.path.expanduser('~')
-    report_file = os.path.join(report_directory, 'bug-downstairs.txt')
+    report_file = os.path.join(report_directory, 'downstairs-bug.txt')
 
     # with 'w' we override,... but i dont want to grow the file uncontrolled,
     # so maybe i rewrite it later to append,.. but then we need some kind of
     # ring buffer.
     with open(report_file, 'w') as f:
         f.write(report)
+
+    return report_file
 
 
 if __name__ == '__main__':
