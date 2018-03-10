@@ -27,6 +27,9 @@ DOC-CC=pandoc
 # the "compiler" for the game (the executable)
 PY-CC=python -OO $(VIRTUALENV)/bin/pyinstaller
 
+# the "compiler" for the build info
+BUILD-INFO-CC=python tools/generate_build_info.py
+
 # the source and destination directories for the docs
 DOC-SRC-DIR=docs-src
 # HINT: dont change this, this is also a targets name and
@@ -39,6 +42,9 @@ BIN-DIR=bin
 
 # the temp dir (f.e. for creating the docs or creating the executable)
 TMP-DIR=tmp
+
+# the build info file
+BUILD-INFO-FILE=$(SRC-DIR)/build_info.py
 
 # the main source file
 SRC-FILE=$(SRC-DIR)/roguelike.py
@@ -77,6 +83,7 @@ DOC-FLAGS=--from=markdown --to=html --standalone --smart
 default:
 	( \
 	  $(ACTIVATE-VIRTUALENV) ; \
+	  $(BUILD-INFO-CC) --output=$(BUILD-INFO-FILE) ; \
 	  $(PY-CC) $(PY-CC-FLAGS) --workpath=$(TMP-DIR) --distpath=$(BIN-DIR) --name $(NAME) $(SRC-FILE) ; \
 	  $(DEACTIVATE-VIRTUALENV) ; \
 	)
@@ -120,4 +127,5 @@ clean:
 	rm -r $(DOC-DIR)
 	rm -r $(BIN-DIR)
 	rm -r $(TMP-DIR)
+	rm $(BUILD-INFO-FILE)
 
