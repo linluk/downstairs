@@ -1,55 +1,115 @@
 #
-# Makefile for __N_A_M_E__
+# Makefile for DOWNSTAIRS the roguelike
 #
-# targets:
+# Author: Lukas Singer
 #
-#   docs  ->  creates html files in docs/ from md files in docs-src/
-#             the docs/ dir is the github page.
-#             TODO: configure github to use the docs/ dir as the github.io page.
-#                   but first: find a name !!! and renam the repository.
-#
-#   clean  -> removes all files generatable by this make file
+# Created: 2018-03-09
 #
 
+
+#################
+#               #
+# CONFIGURATION #
+#               #
+#################
+
+
+# the name of the game
 NAME=downstairs
 
+# the directory for the virtual enviroment
+# HINT: dont change this, this is also a targets name!
 VIRTUALENV=venv
+
+# the "compiler" for the docs
 DOC-CC=pandoc
+
+# the "compiler" for the game (the executable)
 PY-CC=python -OO $(VIRTUALENV)/bin/pyinstaller
 
+# the source and destination directories for the docs
 DOC-SRC-DIR=docs-src
+# HINT: dont change this, this is also a targets name and
+#       the name of the gh-pages!
 DOC-DIR=docs
 
-BIN-DIR=bin
+# the source and destination directory for the game (the executable)
 SRC-DIR=src
+BIN-DIR=bin
+
+# the temp dir (f.e. for creating the docs or creating the executable)
 TMP-DIR=tmp
+
+# the main source file
 SRC-FILE=$(SRC-DIR)/roguelike.py
 
-PY-CC-FLAGS=--clean --onefile --strip --log-level=WARN --specpath $(TMP-DIR)
-DOC-FLAGS=--from=markdown --to=html --standalone --smart
-
+# the docs source and destination files
 DOC-SRC-FILES=$(wildcard $(DOC-SRC-DIR)/*.md)
 DOC-FILES=$(patsubst $(DOC-SRC-DIR)/%.md, $(DOC-DIR)/%.html, $(DOC-SRC-FILES))
 
+# the requirements file
+REQ-FILE=requirements.txt
 
+# activation and deactivation commands for the virtual enviroment
+ACTIVATE-VIRTUALENV=. $(VIRTUALENV)/bin/activate
+DEACTIVATE-VIRTUALENV=deactivate
+
+# flags for the "compiler" for the game
+PY-CC-FLAGS=--clean --onefile --strip --log-level=WARN --specpath $(TMP-DIR)
+
+# flags for the "compiler" for the docs
+DOC-FLAGS=--from=markdown --to=html --standalone --smart
+
+
+###########
+#         #
+# TARGETS #
+#         #
+###########
+
+
+# build the game when invoked with:
+#   $ make
 default:
 	( \
-	  . $(VIRTUALENV)/bin/activate ; \
+	  $(ACTIVATE-VIRTUALENV) ; \
 	  $(PY-CC) $(PY-CC-FLAGS) --workpath=$(TMP-DIR) --distpath=$(BIN-DIR) --name $(NAME) $(SRC-FILE) ; \
-	  deactivate ; \
+	  $(DEACTIVATE-VIRTUALENV) ; \
 	)
 
 
+# create the virtual enviroment and install requirements when invoked with:
+#   $ make venv
+.PHONY: $(VIRTUALENV)
+$(VIRTUALENV):
+	( \
+	  python3 -m venv $(VIRTUALENV) ; \
+	  $(ACTIVATE-VIRTUALENV) ; \
+	  pip install -r $(REQ-FILE) ; \
+	  $(DEACTIVATE-VIRTUALENV) ; \
+	)
+
+# remove the virtual enviroment when invoked with:
+#   $ make clean-venv
+clean-venv:
+	rm -r $(VIRTUALENV)
+
+
+# build the docs when invoked with:
+#   $ make docs
+.PHONY: $(DOC-DIR)
+$(DOC-DIR): $(DOC-FILES)
+
 $(DOC-DIR)/%.html: $(DOC-SRC-DIR)/%.md
+	mkdir -p $(DOC-DIR)
 	$(DOC-CC) --output=$@ $(DOC-FLAGS) $<
 
 
-.PHONY: docs
-docs: $(DOC-FILES)
-
+# remove everything created with this Makefile (except the virtual enviroment) when invoked with:
+#   $ make clean
 .PHONY: clean
 clean:
-	rm  $(DOC-DIR)/*
-	rm  $(BIN-DIR)/*
+	rm -r $(DOC-DIR)
+	rm -r $(BIN-DIR)
 	rm -r $(TMP-DIR)
 
