@@ -47,6 +47,10 @@ SRC-FILE=$(SRC-DIR)/roguelike.py
 DOC-SRC-FILES=$(wildcard $(DOC-SRC-DIR)/*.md)
 DOC-FILES=$(patsubst $(DOC-SRC-DIR)/%.md, $(DOC-DIR)/%.html, $(DOC-SRC-FILES))
 
+# the images for the docs
+DOC-SRC-IMAGES=$(wildcard $(DOC-SRC-DIR)/images/*.png)
+DOC-IMAGES=$(patsubst $(DOC-SRC-DIR)/images/%.png, $(DOC-DIR)/images/%.png, $(DOC-SRC-IMAGES))
+
 # the requirements file
 REQ-FILE=requirements.txt
 
@@ -98,11 +102,15 @@ clean-venv:
 # build the docs when invoked with:
 #   $ make docs
 .PHONY: $(DOC-DIR)
-$(DOC-DIR): $(DOC-FILES)
+$(DOC-DIR): $(DOC-FILES) $(DOC-IMAGES)
 
 $(DOC-DIR)/%.html: $(DOC-SRC-DIR)/%.md
 	mkdir -p $(DOC-DIR)
 	$(DOC-CC) --output=$@ $(DOC-FLAGS) $<
+
+$(DOC-DIR)/images/%.png: $(DOC-SRC-DIR)/images/%.png
+	mkdir -p $(DOC-DIR)/images
+	ln --force --physical $< $@
 
 
 # remove everything created with this Makefile (except the virtual enviroment) when invoked with:

@@ -18,5 +18,12 @@ on github or write an email to our MAILING-LIST!
 
 
 If you relly like **`downstairs`** and want to support us you can donate to
-our [PayPal]() account or to one of the tools or websites we use.
+our [PayPal](https://www.paypal.me/linluk/10) account or to one of the tools or
+websites we use.
+
+
+You can find a list of tools and resources we use and love [here](love.html).
+
+
+
 
