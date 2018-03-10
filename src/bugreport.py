@@ -40,7 +40,8 @@ INDENT = '\n' + ' ' * 20
 
 def bugreport(exc_info=None) -> str:
     typ, value, raw_trace = exc_info if exc_info is not None else sys.exc_info()
-    trace = ''.join('{}:{}  {}  {}'.format(*frame) for frame in traceback.extract_tb(raw_trace, 32))
+    # TODO : filename should be relative !!
+    trace = ['{}:{}  {}  {}'.format(*frame) for frame in traceback.extract_tb(raw_trace, 32)]
 
     def prepare(value):
         iterable = None
