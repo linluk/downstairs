@@ -2,7 +2,7 @@
 TITLE = 'Roguelike'
 AUTHOR = 'Lukas Singer, Daniel Nimmervoll'
 EMAIL = 'lukas42singer (at) gmail (dot) com'
-COPYRIGHT = 'Copyright (C) 2018 by {}'.format(AUTHOR)
+COPYRIGHT = 'Copyright (C) 2017 - 2018 by {}'.format(AUTHOR)
 CREDITS = [
     "https://www.python.org/",
     "https://vim.sourceforge.io/",
