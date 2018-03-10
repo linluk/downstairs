@@ -8,26 +8,22 @@ Created: 2017-10-04
 License: [WTFPL](http://www.wtfpl.net/)
 
 This project should become a
-[Roguelike](http://en.wikipedia.org/wiki/Roguelike) Game and/or an Engine.
+[Roguelike](http://en.wikipedia.org/wiki/Roguelike) Game.
+
+It was renamed from `roguelike` to **`downstairs`** on 2018-03-10.
 
 Setup
 =====
 
 ```
 # clone the repository
-git clone https://github.com/linluk/roguelike.git
-cd roguelike
+git clone https://github.com/linluk/downstairs.git
+cd downstairs
 
-# create a virtual environment with python3
-python3 -m venv venv
+# prepare it (virtual enviroment and requirements):
+make venv
 
-# activate the virtual environment
-. venv/bin/activate
-
-# install the dependencies to the virtual environment
-pip install -r requirements.txt
-
-# run it
+# run it (from source files)
 ./play_ascii
 # or ./play_cmdln if you prefere to play in terminal
 
