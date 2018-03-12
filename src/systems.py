@@ -19,23 +19,11 @@ import menu
 import state_manager
 import inventory
 
-class BaseSystem(ecs.System): # {{{1
-  """ base class for game systems (game dependencies i dont want to have in the ecs module) """
-  def __init__(self, relevant_components: Iterable[ecs.ComponentType], iterate_copy: bool = False) -> None:
-    super().__init__(relevant_components, iterate_copy)
-    self._world = None # type: world.World
-    self._state_manager = None # type: state_manager.StateManager
-
-  def execute(self, world_: world.World, state_manager_: state_manager.StateManager, entities: Set[ecs.Entity]):
-    self._world = world_
-    self._state_manager = state_manager_
-    super().execute(entities)
-
-  world = property(lambda s: s._world)
-  state_manager = property(lambda s: s._state_manager)
+import systems_base
 
 
-class ActionSystem(BaseSystem): #{{{1
+
+class ActionSystem(systems_base.BaseSystem): #{{{1
     """ base class for systems dealing with actions (movement, attack, door opening, ...) -> the player and the enemies """
 
     def move_or_attack(self, entity: ecs.Entity, entities: Set[ecs.Entity]) -> None:
@@ -84,7 +72,7 @@ class ActionSystem(BaseSystem): #{{{1
         #move_or_attack.dxdy = (0, 0)
 
 
-class UserInput(BaseSystem):  # {{{1
+class UserInput(systems_base.BaseSystem):  # {{{1
   def __init__(self):
       super().__init__([components.Player])
 
@@ -129,7 +117,7 @@ class UserInput(BaseSystem):  # {{{1
       ui.message('command not implemented!')
 
 
-class Ai(BaseSystem):  # {{{1
+class Ai(systems_base.BaseSystem):  # {{{1
   def __init__(self) -> None:
     super().__init__([components.Ai])
     self._line_of_sight = None
@@ -187,7 +175,7 @@ class Ai(BaseSystem):  # {{{1
 
 
 
-class Turn(BaseSystem):  # {{{1
+class Turn(systems_base.BaseSystem):  # {{{1
   def __init__(self):
     super().__init__([], True)
     self._on_moved = None # type: Callable[[ecs.Entity], None]
@@ -318,7 +306,7 @@ class Turn(BaseSystem):  # {{{1
   toggle_door = property(_get_toggle_door, _set_toggle_door, doc='should return true when toggled the door')
   on_moved = property(_get_on_moved, _set_on_moved)
 
-class Rendering(BaseSystem):  # {{{1
+class Rendering(systems_base.BaseSystem):  # {{{1
 
   def __init__(self, offset_x: int = 0, offset_y: int = 0) -> None:
     super().__init__([components.Graphics, components.Position])
