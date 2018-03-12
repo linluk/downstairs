@@ -32,6 +32,7 @@ BUGREPORT {timestamp}
         // This section contains informations about your system.
 
         SYSTEM   : {system_system}
+        COMMAND  : {system_command}
 
 
 """
@@ -39,9 +40,18 @@ BUGREPORT {timestamp}
 INDENT = '\n' + ' ' * 20
 
 def bugreport(exc_info=None) -> str:
-    typ, value, raw_trace = exc_info if exc_info is not None else sys.exc_info()
-    # TODO : filename should be relative !!
-    trace = ['{}:{}  {}  {}'.format(*frame) for frame in traceback.extract_tb(raw_trace, 32)]
+    typ, value, frames = exc_info if exc_info is not None else sys.exc_info()
+    trace = []
+    path_to_strip = os.path.dirname(__file__)
+    strip_path = lambda s: s[len(path_to_strip) + 1:] if s.startswith(path_to_strip) else s
+    for frame in traceback.extract_tb(frames, 32):
+        fn = strip_path(frame[0])
+        ln = frame[1]
+        fu = frame[2]
+        tx = frame[3]
+        t = '{}:{}  {}  {}'.format(fn, ln, fu, tx)
+        print(t)
+        trace.append(t)
 
     def prepare(value):
         iterable = None
@@ -68,7 +78,8 @@ def bugreport(exc_info=None) -> str:
             build_status=prepare(build_info.STATUS),
             build_user=prepare(build_info.USER),
             build_packages=prepare(build_info.PACKAGES),
-            system_system=prepare(system))
+            system_system=prepare(system),
+            system_command=prepare(' '.join(sys.argv)))
 
     report_directory = os.path.expanduser('~')
     report_file = os.path.join(report_directory, 'downstairs-bug.txt')
