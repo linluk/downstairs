@@ -12,6 +12,7 @@ def create_orc(x: int, y: int) -> ecs.Entity:
   e.add_component(components.Ai(move_or_attack=True))
   e.add_component(components.Position(x, y))
   e.add_component(components.Sight(4))
+  e.add_component(components.Moveable())
   c = components.CombatStats()
   c.ATK = 10
   c.DEF = 10
@@ -28,6 +29,7 @@ def create_snake(x: int, y: int) -> ecs.Entity:
   e.add_component(components.Ai(move_or_attack=True))
   e.add_component(components.Position(x, y))
   e.add_component(components.Sight(4))
+  e.add_component(components.Moveable())
   c = components.CombatStats()
   c.ATK = 10
   c.DEF = 10

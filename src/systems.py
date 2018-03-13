@@ -28,17 +28,17 @@ import move_or_attack
 class UserInput(systems_base.BaseSystem):  # {{{1
   def __init__(self):
       super().__init__([components.Player])
-      self.move_or_attack = move_or_attack.MoveOrAttack(self)
+      self._move_or_attack = move_or_attack.MoveOrAttack(self)
 
   def before(self, entities: Set[ecs.Entity]) -> bool:
-      self.move_or_attack.entities = entities
+      self._move_or_attack.entities = entities
       return super().before(entities)
 
   def update(self, entity: ecs.Entity, _unused) -> None:
     cmd = ui.commands.getcmd()
     if cmd.is_direction():
         ## THIS CALLS THE SUBSYSTEM MOVE OR ATTACK --> THIS IS HOW IT SHOULD BE!!
-        self.move_or_attack.execute(entity, *cmd.direction_to_dxdy())
+        self._move_or_attack.execute(entity, *cmd.direction_to_dxdy())
         #move_or_attack = entity.get_component(components.MoveOrAttack)
         #if move_or_attack is None:
         #    move_or_attack = components.MoveOrAttack()
@@ -83,6 +83,7 @@ class Ai(systems_base.BaseSystem):  # {{{1
     self._line_of_sight = None
     self.p_position = None # type: components.Position
     self.p_combat_stats = None # type: components.CombatStats
+    self._move_or_attack = move_or_attack.MoveOrAttack(self) # type: move_or_attack.MoveOrAttack
 
 
   def _can_see(self, r: float, x1: int, y1: int, x2: int, y2: int) -> bool:
@@ -96,17 +97,19 @@ class Ai(systems_base.BaseSystem):  # {{{1
     self._line_of_sight = line_of_sight
 
   def before(self, entities: Set[ecs.Entity]) -> bool:
-    p = None # type: ecs.Entity
-    for e in entities:
-      if e.has_component(components.Player):
-        p = e
-        break
+      self._move_or_attack.entities = entities
 
-    if p is not None:
-      self.p_position = p.get_component(components.Position) # type: components.Position
-      self.p_combat_stats = p.get_component(components.CombatStats) # type: components.CombatStats
+      p = None # type: ecs.Entity
+      for e in entities:
+          if e.has_component(components.Player):
+            p = e
+            break
 
-    return super().before(entities)
+      if p is not None:
+          self.p_position = p.get_component(components.Position) # type: components.Position
+          self.p_combat_stats = p.get_component(components.CombatStats) # type: components.CombatStats
+
+      return super().before(entities)
 
 
   def update(self, entity: ecs.Entity, entities: Set[ecs.Entity]):
@@ -114,22 +117,17 @@ class Ai(systems_base.BaseSystem):  # {{{1
     if ai.move_or_attack:
       position = entity.get_component(components.Position) # type: components.Position
       if position is not None:
-        move_or_attack = entity.get_component(components.MoveOrAttack) # type: components.MoveOrAttack
-        if move_or_attack is None:
-          move_or_attack = components.MoveOrAttack()
-          entity.add_component(move_or_attack)
         moved = False
         sight = entity.get_component(components.Sight) # type: components.Sight
         if sight is not None:
           if self._can_see(sight.radius, position.x, position.y, self.p_position.x, self.p_position.y):
             ui.message('{} sees player'.format(hash(entity)))
-            move_or_attack.dx = 1 if position.x < self.p_position.x else -1 if position.x > self.p_position.x else 0
-            move_or_attack.dy = 1 if position.y < self.p_position.y else -1 if position.y > self.p_position.y else 0
+            dx = 1 if position.x < self.p_position.x else -1 if position.x > self.p_position.x else 0
+            dy = 1 if position.y < self.p_position.y else -1 if position.y > self.p_position.y else 0
+            self._move_or_attack.execute(entity, dx, dy)
             moved = True
         if not moved:
-          move_or_attack.dx = rnd.randrange(-2, 2)
-          move_or_attack.dy = rnd.randrange(-2, 2)
-    #print(str(move_or_attack))
+            self._move_or_attack.execute(entity, rnd.randrange(-2, 2), rnd.randrange(-2, 2))
 
   line_of_sight = property(lambda s: s._line_of_sight, _set_line_of_sight)
 

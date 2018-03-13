@@ -1,16 +1,20 @@
 
+# stdlib
 from typing import Set
 
+# clean
 import ecs
 import rnd
 
+# ugly
 import ui
+import gameover
 
+# required
 import systems_base
-
 import components
-
 import utils
+
 
 class MoveOrAttack(systems_base.BaseSubSystem):
     def __init__(self, parent: systems_base.BaseSystem,):
