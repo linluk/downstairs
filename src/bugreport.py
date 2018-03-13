@@ -50,7 +50,6 @@ def bugreport(exc_info=None) -> str:
         fu = frame[2]
         tx = frame[3]
         t = '{}:{}  {}  {}'.format(fn, ln, fu, tx)
-        print(t)
         trace.append(t)
 
     def prepare(value):
@@ -89,6 +88,8 @@ def bugreport(exc_info=None) -> str:
     # ring buffer.
     with open(report_file, 'w') as f:
         f.write(report)
+
+    print(report)
 
     return report_file
 
