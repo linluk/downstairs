@@ -68,7 +68,7 @@ DEACTIVATE-VIRTUALENV=deactivate
 PY-CC-FLAGS=--clean --onefile --strip --log-level=WARN --specpath $(TMP-DIR)
 
 # flags for the "compiler" for the docs
-DOC-FLAGS=--from=markdown --to=html --standalone --smart
+DOC-FLAGS=--from=markdown --to=html5 --standalone --smart --email-obfuscation=javascript
 
 
 ###########
