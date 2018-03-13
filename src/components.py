@@ -6,6 +6,10 @@ import helper
 import ui
 import ecs
 
+class Moveable(ecs.Component):
+    def __init__(self) -> None:
+        super().__init__()
+
 class MoveOrAttack(ecs.Component):
   def __init__(self) -> None:
     super().__init__()

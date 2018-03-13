@@ -34,7 +34,6 @@ class Game(state.State):
     self._user_input = systems.UserInput()
 
     self._turn = systems.Turn()
-    self._turn.on_moved = self.moved
     self._turn.toggle_door = self.toggle_door
 
     self._ai = systems.Ai()
@@ -49,10 +48,6 @@ class Game(state.State):
     if entity.has_component(components.Player):
       sight = entity.get_component(components.Sight) # type: components.Sight
       self.world.current.tilemap.fov(*entity.get_component(components.Position).xy, sight.radius) ## TODO : fix for world
-
-
-  def moved(self, entity: ecs.Entity):
-    self.calc_fov_if_player(entity)
 
   def toggle_door(self, entity, x, y):
     t = self.world.current.tilemap.get_tile(x, y) ## TODO : fix for world
@@ -82,7 +77,7 @@ class Game(state.State):
     e.add_component(c)
     c = components.Name('Player')
     e.add_component(c)
-    c = components.MoveOrAttack()
+    c = components.Moveable()
     e.add_component(c)
     c = components.Position(*self.world.current.entry) ## TODO : fix for world
     e.add_component(c)

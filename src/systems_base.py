@@ -29,26 +29,28 @@ class BaseSubSystem(object): # {{{1
     """ base class for subsystems. a subsystem can be used by a system and called to a single entity. it does not iterate over entities. """
     def __init__(self, parent_system: BaseSystem, required_components: Iterable[ecs.ComponentType]):
         super().__init__()
-        self._parent = parent_system
-        self._entities = None # type : Set[ecs.Entity]
+        self._parent = parent_system # type: BaseSystem
+        self._entities = None # type: Set[ecs.Entity]
         self._required_components = set(required_components)
 
-    def update(self, entity: ecs.Entity, entities: Set[ecs.Entity]):
+    def update(self, entity: ecs.Entity, entities: Set[ecs.Entity], *args, **kwargs):
         pass
 
-    def execute(self, entity: ecs.Entity):
+    def execute(self, entity: ecs.Entity, *args, **kwargs):
         relevant_entity = True
         for required_component in self._required_components:
             if not entity.has_component(required_component):
                 relevant_entity = False
                 break
         if relevant_entity:
-            self.update(entity, self._entities)
+            self.update(entity, self._entities, *args, **kwargs)
 
     def _set_entities(self, entities: Set[ecs.Entity]):
         self._entities = entities
 
     parent = property(lambda s: s._parent)
     entities = property(lambda s: s._entities, _set_entities)
+    state_manager = property(lambda s: s._parent.state_manager)
+    world = property(lambda s: s._parent.world)
 
 
