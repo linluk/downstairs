@@ -17,7 +17,8 @@ Source code and build instructions can be found
 
 If you found a bug or have ideas for improovements feel free to
 [open an Issue](https://github.com/linluk/downstairs/issues/new)
-on github or write an email to our MAILING-LIST!
+on github or send an email to
+[thinkdownstairs@gmail.com](mailto:thinkdownstairs@gmail.com).
 
 
 If you really like **`downstairs`** and want to support us you can donate to
