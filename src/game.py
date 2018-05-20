@@ -42,15 +42,15 @@ class Game(state.State):
     self._rendering = systems.Rendering(defs.LEVEL_X, defs.LEVEL_Y)
 
   def line_of_sight(self, x1: int, y1: int, x2: int, y2: int) -> bool:
-      return self.world.current.tilemap.los(x1, y1, x2, y2) ## TODO : fix for world
+      return self.world.current.tilemap.los(x1, y1, x2, y2)
 
   def calc_fov_if_player(self, entity: ecs.Entity):
     if entity.has_component(components.Player):
       sight = entity.get_component(components.Sight) # type: components.Sight
-      self.world.current.tilemap.fov(*entity.get_component(components.Position).xy, sight.radius) ## TODO : fix for world
+      self.world.current.tilemap.fov(*entity.get_component(components.Position).xy, sight.radius)
 
   def toggle_door(self, entity, x, y):
-    t = self.world.current.tilemap.get_tile(x, y) ## TODO : fix for world
+    t = self.world.current.tilemap.get_tile(x, y)
     if isinstance(t, tilemap.Door):
       t.toggle()
       self.calc_fov_if_player(entity)
@@ -79,7 +79,7 @@ class Game(state.State):
     e.add_component(c)
     c = components.Moveable()
     e.add_component(c)
-    c = components.Position(*self.world.current.entry) ## TODO : fix for world
+    c = components.Position(*self.world.current.entry)
     e.add_component(c)
     c = components.Graphics('@', ui.WHITE, ui.BLACK, ui.BOLD)
     e.add_component(c)
@@ -100,7 +100,7 @@ class Game(state.State):
       rand = rnd.Random()
       for i in range(100):
         x, y = rand.randrange(1, defs.LEVEL_W - 2), rand.randrange(1, defs.LEVEL_H - 2)
-        if not self.world.current.is_blocked(x, y): ## TODO : fix for world
+        if not self.world.current.is_blocked(x, y):
           if rand.chance():
             e = monsters.create_orc(x, y)
           else:
@@ -111,7 +111,7 @@ class Game(state.State):
       rand = rnd.Random()
       for i in range(100):
         x, y = rand.randrange(1, defs.LEVEL_W - 2), rand.randrange(1, defs.LEVEL_H - 2)
-        if not self.world.current.is_blocked(x, y): ## TODO : fix for world
+        if not self.world.current.is_blocked(x, y):
           e = items.create_potion_of_healing()
           c = components.Position(x, y)
           e.add_component(c)
