@@ -6,10 +6,12 @@ import helper
 import ui
 import ecs
 
+@ecs.register_component
 class Moveable(ecs.Component):
     def __init__(self) -> None:
         super().__init__()
 
+@ecs.register_component
 class MoveOrAttack(ecs.Component):
   def __init__(self) -> None:
     super().__init__()
@@ -26,6 +28,7 @@ class MoveOrAttack(ecs.Component):
   dx = property(lambda s: s._dx, lambda s, x: s._set((x, s._dy)))
   dy = property(lambda s: s._dy, lambda s, y: s._set((s._dx, y)))
 
+@ecs.register_component
 class Name(ecs.Component):
   def __init__(self, name: str) -> None:
     super().__init__()
@@ -34,11 +37,13 @@ class Name(ecs.Component):
   name = property(lambda s: s._name)
 
 
+@ecs.register_component
 class Player(ecs.Component):
   def __init__(self) -> None:
     super().__init__()
 
 
+@ecs.register_component
 class Door(ecs.Component):
   ### TODO: the commented key could be useful :-)
   def __init__(self) -> None:
@@ -64,6 +69,7 @@ class Door(ecs.Component):
 
 
 
+@ecs.register_component
 class Position(ecs.Component):
   __slots__ = ('_x', '_y')
   def __init__(self, x: int = 0, y: int = 0) -> None:
@@ -82,6 +88,7 @@ class Position(ecs.Component):
   y = property(lambda s: s._y, lambda s, y: s._set((s._x, y)))
 
 
+@ecs.register_component
 class Blocking(ecs.Component):
   __slots__ = ('_value', )
   def __init__(self, value: bool = True) -> None:
@@ -94,6 +101,7 @@ class Blocking(ecs.Component):
   value = property(lambda s: s._value, _set)
 
 
+@ecs.register_component
 class Sight(ecs.Component):
   __slots__ = ('_radius', )
   def __init__(self, radius: float) -> None:
@@ -103,6 +111,7 @@ class Sight(ecs.Component):
   radius = property(lambda s: s._radius)
 
 
+@ecs.register_component
 class Graphics(ecs.Component):
   __slots__ = ('ch', 'fg', 'bg', 'st')
   def __init__(self, ch: str, fg: int = ui.WHITE, bg: int = ui.BLACK, st: int = 0) -> None:
@@ -113,6 +122,7 @@ class Graphics(ecs.Component):
     self.st = st   # style of font like bold
 
 
+@ecs.register_component
 class CombatStats(ecs.Component):
 
   def __init__(self) -> None:
@@ -137,6 +147,7 @@ class CombatStats(ecs.Component):
   HP = property(lambda s: s._hp, _set_hp)
 
 
+@ecs.register_component
 class Ai(ecs.Component):
   # this component controls which ai systems should be executed on an entity
   def __init__(self, **kwargs) -> None:
@@ -149,6 +160,7 @@ class Ai(ecs.Component):
   move_or_attack = property(lambda s: s._move_or_attack, _set_move_or_attack)
 
 
+@ecs.register_component
 class Weight(ecs.Component):
   def __init__(self, weight: float) -> None:
     super().__init__()
@@ -159,6 +171,7 @@ class Weight(ecs.Component):
 
   weight = property(lambda s: s._weight, _set_weight)
 
+@ecs.register_component
 class Items(ecs.Component):
   def __init__(self) -> None:
     super().__init__()
@@ -167,6 +180,7 @@ class Items(ecs.Component):
   items = property(lambda s: s._items)
 
 
+@ecs.register_component
 class Action(ecs.Component):
   def __init__(self, **kwargs):
     super().__init__()
@@ -179,7 +193,7 @@ class Action(ecs.Component):
 
 
 
-all_components = [cls for cls in helper.classes_from_module(__name__, lambda c: issubclass(c, ecs.Component))]
+#all_components = [cls for cls in helper.classes_from_module(__name__, lambda c: issubclass(c, ecs.Component))]
 
 ##############################################################################
 ##############################################################################
