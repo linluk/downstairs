@@ -16,6 +16,7 @@ RegisteredComponentTypes: Set[ComponentType] = set()
 def register_component(component_type: ComponentType):
     global RegisteredComponentTypes
     RegisteredComponentTypes.add(component_type)
+    return component_type
 
 
 class Entity(object):
