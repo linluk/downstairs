@@ -9,13 +9,12 @@ class Component(object):
     super().__init__()
 
 
-
 ComponentType = Type[Component]
-RegisteredComponentTypes: Set[ComponentType] = set()
+registered_componente_types: Set[ComponentType] = set()
 
 def register_component(component_type: ComponentType):
-    global RegisteredComponentTypes
-    RegisteredComponentTypes.add(component_type)
+    global registered_componente_types
+    registered_componente_types.add(component_type)
     return component_type
 
 
